@@ -22,4 +22,5 @@ public class Language {
     public static String delLore;
     public static String clearDisplayName;
     public static String clearLore;
+    public static String saveError;
 }

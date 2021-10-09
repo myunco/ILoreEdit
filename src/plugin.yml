@@ -1,23 +1,20 @@
 name: ILoreEdit
 main: xyz.myunco.iloreedit.ILoreEdit
-version: 1.0.5
+version: 2.0.0
 api-version: 1.13
 author: unco_
 depend: [ProtocolLib]
 commands:
   iItem:
     description: 'This is the main command of the plugin.'
-    usage: '§e/iItem §3<§aname§c|§alore§c|§aclear§3>§b args...'
-    aliases: ['it', 'll', 'ii']
-    permission: iloreedit.use
+    aliases: ['it', 'll', 'ii', 'lore']
+    permission: ILoreEdit.use
     permission-message: "§cYou don't have permission!"
   ILoreEdit:
     description: 'This is the basic command of the plugin.'
-    usage: '§e/ILoreEdit §3<§ahelp§c|§aversion§c|§areload§3>'
-    aliases: ['ile']
-    permission: iloreedit.use
+    aliases: ['ile', 'le']
+    permission: ILoreEdit.use
     permission-message: "§cYou don't have permission!"
 permissions:
-  iloreedit.use:
-    description: Has permission to access the all ILoreEdit command
+  ILoreEdit.use:
     default: op

@@ -10,7 +10,7 @@ public class ConfigLoader {
         pl.saveDefaultConfig();
         Language.enable = config.getString("message.enable");
         Language.disable = config.getString("message.disable");
-        StringBuilder helpMsg = new StringBuilder();
+        final StringBuilder helpMsg = new StringBuilder();
         config.getStringList("message.helpMsg").forEach(value -> helpMsg.append(value).append("\n"));
         Language.helpMsg = helpMsg.toString();
         Language.canOnlyPlayer = config.getString("message.canOnlyPlayer");
@@ -30,5 +30,6 @@ public class ConfigLoader {
         Language.delLore = config.getString("message.delLore");
         Language.clearDisplayName = config.getString("message.clearDisplayName");
         Language.clearLore = config.getString("message.clearLore");
+        Language.saveError = config.getString("message.saveError");
     }
 }
