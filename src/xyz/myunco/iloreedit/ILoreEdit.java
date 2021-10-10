@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -22,28 +23,24 @@ import java.util.List;
 public class ILoreEdit extends JavaPlugin {
     static final String PREFIX = "§3[§9ILoreEdit§3] ";
     static String MESSAGE_PREFIX;
-    static String version;
-    static ILoreEdit plugin;
     static HashMap<String, List<String>> tabList = new HashMap<>();
-    static ProtocolManager pm;
+    static ProtocolManager manager;
 
     @SuppressWarnings("ConstantConditions")
     @Override
     public void onEnable() {
-        plugin = this;
-        version = getDescription().getVersion();
         ConfigLoader.load();
         MESSAGE_PREFIX = Language.MESSAGE_PREFIX;
-        List<String> aliases = Bukkit.getPluginCommand("iItem").getAliases();
-        aliases.add("iItem");
-        pm = ProtocolLibrary.getProtocolManager();
-        pm.addPacketListener(new PacketAdapter(this, ListenerPriority.NORMAL, PacketType.Play.Client.CHAT) {
+        List<String> aliases = new ArrayList<>(Bukkit.getPluginCommand("iItem").getAliases());
+        aliases.add("iitem");
+        manager = ProtocolLibrary.getProtocolManager();
+        manager.addPacketListener(new PacketAdapter(this, ListenerPriority.NORMAL, PacketType.Play.Client.CHAT) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
                 if (event.getPacketType() == PacketType.Play.Client.CHAT) {
                     String msg = event.getPacket().getStrings().read(0);
                     if (msg.startsWith("/")) {
-                        if (aliases.contains(Util.getTextLeft(msg, " ").toLowerCase())) {
+                        if (aliases.contains(Util.getTextLeft(msg, " ").toLowerCase().substring(1))) {
                             Player p = event.getPlayer();
                             if (p.hasPermission("ILoreEdit.use")) {
                                 commandIItem(msg, p);
@@ -58,7 +55,7 @@ public class ILoreEdit extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        pm.removePacketListeners(this);
+        manager.removePacketListeners(this);
         Bukkit.getConsoleSender().sendMessage(PREFIX + Language.disable);
     }
 
@@ -79,7 +76,7 @@ public class ILoreEdit extends JavaPlugin {
                 }
                 switch (args[0].toLowerCase()) {
                     case "version":
-                        sender.sendMessage(Language.MESSAGE_PREFIX + "§bVersion§e: §a" + version);
+                        sender.sendMessage(Language.MESSAGE_PREFIX + "§bVersion§e: §a" + getDescription().getVersion());
                         break;
                     case "reload":
                         ConfigLoader.load();
