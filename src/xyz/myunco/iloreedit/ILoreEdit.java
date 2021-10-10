@@ -13,8 +13,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,31 +24,29 @@ import java.util.List;
 
 public class ILoreEdit extends JavaPlugin {
     static final String PREFIX = "§3[§9ILoreEdit§3] ";
-    static String MESSAGE_PREFIX;
+    static String messagePrefix;
     static HashMap<String, List<String>> tabList = new HashMap<>();
     static ProtocolManager manager;
     static ILoreEdit plugin;
+    static int version;
 
     @SuppressWarnings({"ConstantConditions", "SpellCheckingInspection"})
     @Override
     public void onEnable() {
-        plugin = this;
-        ConfigLoader.load();
-        MESSAGE_PREFIX = Language.MESSAGE_PREFIX;
-        List<String> commands = new ArrayList<>(Bukkit.getPluginCommand("EditLore").getAliases());
+        init();
+        getLogger().info("Minecraft version : 1." + version);
+        final List<String> commands = new ArrayList<>(Bukkit.getPluginCommand("EditLore").getAliases());
         commands.add("editlore");
         manager = ProtocolLibrary.getProtocolManager();
         manager.addPacketListener(new PacketAdapter(this, ListenerPriority.NORMAL, PacketType.Play.Client.CHAT) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
-                if (event.getPacketType() == PacketType.Play.Client.CHAT) {
-                    String msg = event.getPacket().getStrings().read(0);
-                    if (msg.startsWith("/")) {
-                        if (commands.contains(Util.getTextLeft(msg, " ").toLowerCase().substring(1))) {
-                            Player p = event.getPlayer();
-                            if (p.hasPermission("ILoreEdit.use")) {
-                                commandIItem(msg, p);
-                            }
+                String msg = event.getPacket().getStrings().read(0);
+                if (msg.startsWith("/")) {
+                    if (commands.contains(Util.getTextLeft(msg, " ").substring(1).toLowerCase())) {
+                        Player player = event.getPlayer();
+                        if (player.hasPermission("ILoreEdit.use")) {
+                            commandEditLore(msg.replace("\"\"", " "), player);
                         }
                     }
                 }
@@ -55,34 +55,44 @@ public class ILoreEdit extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage(PREFIX + Language.enable);
     }
 
+    private void init() {
+        plugin = this;
+        ConfigLoader.load();
+        messagePrefix = Language.prefix;
+        if (!new File(plugin.getDataFolder(), "templates.yml").exists()) {
+            plugin.saveResource("templates.yml", false);
+        }
+        version = Integer.parseInt(getServer().getClass().getPackage().getName().split("\\.")[3].split("_")[1]);
+    }
+
     @Override
     public void onDisable() {
         manager.removePacketListeners(this);
         Bukkit.getConsoleSender().sendMessage(PREFIX + Language.disable);
     }
 
-    @SuppressWarnings({"SpellCheckingInspection", "NullableProblems"})
+    @SuppressWarnings({"NullableProblems"})
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         switch (command.getName()) {
             case "EditLore":
                 if (!(sender instanceof Player)) {
-                    sender.sendMessage(Language.MESSAGE_PREFIX + Language.canOnlyPlayer);
+                    sender.sendMessage(messagePrefix + Language.canOnlyPlayer);
                 }
                 break;
             case "ILoreEdit":
                 if (args.length < 1) {
-                    sender.sendMessage("§6用法:");
-                    sender.sendMessage("§e/ILoreEdit §3<§ahelp§c|§aversion§c|§areload§3>");
+                    sender.sendMessage(messagePrefix + Language.usage);
+                    sender.sendMessage(messagePrefix + Language.usageILoreEdit);
                     break;
                 }
                 switch (args[0].toLowerCase()) {
                     case "version":
-                        sender.sendMessage(Language.MESSAGE_PREFIX + "§bVersion§e: §a" + getDescription().getVersion());
+                        sender.sendMessage(messagePrefix + "§bVersion§e: §a" + getDescription().getVersion());
                         break;
                     case "reload":
                         ConfigLoader.load();
-                        sender.sendMessage(Language.MESSAGE_PREFIX + Language.reloaded);
+                        sender.sendMessage(messagePrefix + Language.reloaded);
                         break;
                     default:
                         sender.sendMessage(Language.helpMsg);
@@ -96,58 +106,67 @@ public class ILoreEdit extends JavaPlugin {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (tabList.isEmpty()) {
             tabList.put("ILoreEdit", Arrays.asList("help", "version", "reload"));
-            tabList.put("EditLore", Arrays.asList("name", "add", "set", "ins", "del", "clear"));
+            tabList.put("EditLore", Arrays.asList("name", "add", "set", "ins", "del", "clear", "import", "export", "owner"));
             tabList.put("EditLore.clear", Arrays.asList("name", "lore"));
+            tabList.put("EditLore.owner", new ArrayList<>());
+            tabList.put("EditLore.export", new ArrayList<>());
+        }
+        if (args.length == 2 && args[0].equalsIgnoreCase("import")) {
+            return Util.getTabList(args, new TemplateInfo(this).getTemplateList());
         }
         return Util.getTabList(args, tabList.get(Util.getTabPath(args, command.getName())));
     }
 
-    @SuppressWarnings("SpellCheckingInspection")
-    public void commandIItem(String msg, Player p) {
+    @SuppressWarnings({"deprecation"})
+    public void commandEditLore(String msg, Player p) {
         String arg = Util.getTextRight(msg, " ");
         String[] args = Util.getArgs(arg);
         if ("".equals(args[0])) {
-            p.sendMessage("§6用法:");
-            p.sendMessage("§e/lore §3<§aname§7|§aadd§7|§aset§7|§ains§7|§adel§7|§aclear§3>§b [...]");
+            p.sendMessage(messagePrefix + Language.usage);
+            p.sendMessage(messagePrefix + Language.usageEditLore);
             return;
         }
-        ItemStack item = p.getInventory().getItemInMainHand();
-        //ItemStack item = p.getItemInHand(); 1.7-1.8用
+        ItemStack item;
+        if (version > 8) {
+            item = p.getInventory().getItemInMainHand();
+        } else {
+            item = p.getItemInHand(); //1.7-1.8没有getInventory().getItemInMainHand()
+        }
         ItemMeta meta = item.getItemMeta();
         if (item.getType() == Material.AIR || meta == null) {
-            p.sendMessage(MESSAGE_PREFIX + Language.noItem);
+            p.sendMessage(messagePrefix + Language.noItem);
             return;
         }
         switch (args[0].toLowerCase()) {
             case "name":
                 //ll name test
                 if (args.length < 2) {
-                    p.sendMessage(Language.argsError);
+                    p.sendMessage(messagePrefix + Language.argsError);
                     return;
                 }
                 meta.setDisplayName(Util.translateColor(Util.getTextRight(arg, args[0] + " ")));
-                p.sendMessage(MESSAGE_PREFIX + Language.editDisplayName);
+                p.sendMessage(messagePrefix + Language.editDisplayName);
                 break;
             case "add": {
                 List<String> lore = Util.getLore(meta);
                 //ll add test
                 if (args.length < 2) {
-                    p.sendMessage(Language.argsError);
+                    p.sendMessage(messagePrefix + Language.argsError);
                     return;
                 }
                 lore.add(Util.translateColor(Util.getTextRight(arg, args[0] + " ")));
                 meta.setLore(lore);
-                p.sendMessage(MESSAGE_PREFIX + Language.addLore);
+                p.sendMessage(messagePrefix + Language.addLore);
                 break;
             }
             case "set": {
                 List<String> lore = Util.getLore(meta);
                 //ll set 1 test
                 if (args.length < 3) {
-                    p.sendMessage(Language.argsError);
+                    p.sendMessage(messagePrefix + Language.argsError);
                     return;
                 } else if (lore.size() == 0) {
-                    p.sendMessage(MESSAGE_PREFIX + Language.noLore);
+                    p.sendMessage(messagePrefix + Language.noLore);
                     return;
                 }
                 int line = Util.getLine(p, args[1], lore.size());
@@ -156,18 +175,18 @@ public class ILoreEdit extends JavaPlugin {
                 }
                 lore.set(line - 1, Util.translateColor(Util.getTextRight(arg, args[1] + " ")));
                 meta.setLore(lore);
-                p.sendMessage(MESSAGE_PREFIX + Language.setLore);
+                p.sendMessage(messagePrefix + Language.setLore);
                 break;
             }
             case "ins": {
                 List<String> lore = Util.getLore(meta);
                 //ll ins 1 test
                 if (args.length < 3) {
-                    p.sendMessage(Language.argsError);
+                    p.sendMessage(messagePrefix + Language.argsError);
                     return;
                 }
                 if (lore.size() == 0) {
-                    p.sendMessage(MESSAGE_PREFIX + Language.noLore_ins);
+                    p.sendMessage(messagePrefix + Language.noLore_ins);
                     return;
                 }
                 int line = Util.getLine(p, args[1], lore.size());
@@ -176,7 +195,7 @@ public class ILoreEdit extends JavaPlugin {
                 }
                 lore.add(line - 1, Util.translateColor(Util.getTextRight(arg, args[1] + " ")));
                 meta.setLore(lore);
-                p.sendMessage(MESSAGE_PREFIX + Language.insLore);
+                p.sendMessage(messagePrefix + Language.insLore);
                 break;
             }
             case "del": {
@@ -184,11 +203,11 @@ public class ILoreEdit extends JavaPlugin {
                 //ll del 1
                 List<String> lore = Util.getLore(meta);
                 if (args.length > 2) {
-                    p.sendMessage(Language.argsError);
+                    p.sendMessage(messagePrefix + Language.argsError);
                     return;
                 }
                 if (lore.size() == 0) {
-                    p.sendMessage(MESSAGE_PREFIX + Language.noLore_del);
+                    p.sendMessage(messagePrefix + Language.noLore_del);
                     return;
                 }
                 int line;
@@ -202,36 +221,94 @@ public class ILoreEdit extends JavaPlugin {
                 }
                 lore.remove(line - 1);
                 meta.setLore(lore);
-                p.sendMessage(MESSAGE_PREFIX + Language.delLore);
+                p.sendMessage(messagePrefix + Language.delLore);
                 break;
             }
             case "clear":
                 //ll clear name
                 //ll clear lore
                 if (args.length < 2) {
-                    p.sendMessage(Language.argsError);
+                    p.sendMessage(messagePrefix + Language.argsError);
                     return;
                 }
                 switch (args[1].toLowerCase()) {
                     case "name":
                         meta.setDisplayName(null);
-                        p.sendMessage(MESSAGE_PREFIX + Language.clearDisplayName);
+                        p.sendMessage(messagePrefix + Language.clearDisplayName);
                         break;
                     case "lore":
                         meta.setLore(null);
-                        p.sendMessage(MESSAGE_PREFIX + Language.clearLore);
+                        p.sendMessage(messagePrefix + Language.clearLore);
                         break;
                     default:
-                        p.sendMessage(Language.argsError);
+                        p.sendMessage(messagePrefix + Language.argsError);
                         return;
                 }
                 break;
+            case "import": {
+                //ll import test
+                if (args.length < 2) {
+                    p.sendMessage(messagePrefix + Language.argsError);
+                    return;
+                }
+                TemplateInfo template = new TemplateInfo(this); //模板需要实时更新 所以每次都重新加载
+                if (template.exists(args[1])) {
+                    meta.setDisplayName(template.getDisplayName(args[1]));
+                    meta.setLore(template.getLore(args[1]));
+                    p.sendMessage(messagePrefix + Language.templateImported);
+                } else {
+                    p.sendMessage(messagePrefix + Language.templateNotExist);
+                    return;
+                }
+                break;
+            }
+            case "export": {
+                //ll export test
+                if (args.length < 2) {
+                    p.sendMessage(messagePrefix + Language.argsError);
+                    return;
+                }
+                TemplateInfo template = new TemplateInfo(this);
+                String displayName = meta.getDisplayName();
+                List<String> lore = meta.getLore();
+                if (displayName.isEmpty() && lore == null) {
+                    p.sendMessage(messagePrefix + Language.noExport);
+                    return;
+                }
+                if (template.exists(args[1])) {
+                    //如果存在就先清空显示名和Lore，以免不能完全覆盖
+                    template.setDisplayName(args[1], null);
+                    template.setLore(args[1], null);
+                }
+                if (!displayName.isEmpty()) {
+                    template.setDisplayName(args[1], displayName);
+                }
+                if (lore != null) {
+                    template.setLore(args[1], lore);
+                }
+                template.save();
+                p.sendMessage(messagePrefix + Language.templateExported);
+                break;
+            }
+            case "owner":
+                //ll owner test
+                if (args.length < 2) {
+                    p.sendMessage(messagePrefix + Language.argsError);
+                    return;
+                }
+                if (meta instanceof SkullMeta) {
+                    ((SkullMeta) meta).setOwner(args[1]);
+                    p.sendMessage(messagePrefix + Language.changedOwner);
+                } else {
+                    p.sendMessage(messagePrefix + Language.noSkull);
+                }
+                break;
             default:
-                p.sendMessage(Language.argsError);
+                p.sendMessage(messagePrefix + Language.argsError);
                 return;
         }
         if (!item.setItemMeta(meta)) {
-            p.sendMessage(Language.saveError);
+            p.sendMessage(messagePrefix + Language.saveError);
         }
     }
 }

@@ -1,6 +1,6 @@
 name: ILoreEdit
 main: xyz.myunco.iloreedit.ILoreEdit
-version: 2.0.2
+version: 2.1.0
 api-version: 1.13
 author: unco_
 depend: [ProtocolLib]

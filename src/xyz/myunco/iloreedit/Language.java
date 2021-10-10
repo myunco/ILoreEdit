@@ -1,7 +1,7 @@
 package xyz.myunco.iloreedit;
 
 public class Language {
-    public static final String MESSAGE_PREFIX = "§3[§9ILoreEdit§3] §c-> ";
+    public static String prefix;
     public static String enable;
     public static String disable;
     public static String helpMsg;
@@ -23,4 +23,13 @@ public class Language {
     public static String clearDisplayName;
     public static String clearLore;
     public static String saveError;
+    public static String usage;
+    public static String usageEditLore;
+    public static String usageILoreEdit;
+    public static String templateNotExist;
+    public static String templateImported;
+    public static String noExport;
+    public static String templateExported;
+    public static String noSkull;
+    public static String changedOwner;
 }

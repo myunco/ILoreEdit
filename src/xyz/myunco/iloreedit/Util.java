@@ -14,14 +14,14 @@ public class Util {
         try {
             line = Integer.parseInt(number);
         } catch (NumberFormatException e) {
-            player.sendMessage(Language.MESSAGE_PREFIX + Language.invalidLine);
+            player.sendMessage(Language.prefix + Language.invalidLine);
             return 0;
         }
         if (line > loreSize) {
-            player.sendMessage(Language.MESSAGE_PREFIX + Language.errorLine);
+            player.sendMessage(Language.prefix + Language.errorLine);
             return 0;
         } else if (line == 0) {
-            player.sendMessage(Language.MESSAGE_PREFIX + Language.zeroLine);
+            player.sendMessage(Language.prefix + Language.zeroLine);
             return 0;
         }
         return line;

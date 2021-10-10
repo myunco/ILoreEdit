@@ -3,13 +3,13 @@ package xyz.myunco.iloreedit;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class ConfigLoader {
-    public static ILoreEdit pl = ILoreEdit.plugin;
-    public static FileConfiguration config = pl.getConfig();
 
     public static void load() {
-        pl.saveDefaultConfig();
+        ILoreEdit.plugin.saveDefaultConfig();
+        FileConfiguration config = ILoreEdit.plugin.getConfig();
         Language.enable = config.getString("message.enable");
         Language.disable = config.getString("message.disable");
+        Language.prefix = config.getString("message.prefix");
         final StringBuilder helpMsg = new StringBuilder();
         config.getStringList("message.helpMsg").forEach(value -> helpMsg.append(value).append("\n"));
         Language.helpMsg = helpMsg.toString();
@@ -31,5 +31,14 @@ public class ConfigLoader {
         Language.clearDisplayName = config.getString("message.clearDisplayName");
         Language.clearLore = config.getString("message.clearLore");
         Language.saveError = config.getString("message.saveError");
+        Language.usage = config.getString("message.usage");
+        Language.usageEditLore = config.getString("message.usageEditLore");
+        Language.usageILoreEdit = config.getString("message.usageILoreEdit");
+        Language.templateNotExist = config.getString("message.templateNotExist");
+        Language.templateImported = config.getString("message.templateImported");
+        Language.noExport = config.getString("message.noExport");
+        Language.templateExported = config.getString("message.templateExported");
+        Language.noSkull = config.getString("message.noSkull");
+        Language.changedOwner = config.getString("message.changedOwner");
     }
 }
