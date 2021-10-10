@@ -25,14 +25,16 @@ public class ILoreEdit extends JavaPlugin {
     static String MESSAGE_PREFIX;
     static HashMap<String, List<String>> tabList = new HashMap<>();
     static ProtocolManager manager;
+    static ILoreEdit plugin;
 
-    @SuppressWarnings("ConstantConditions")
+    @SuppressWarnings({"ConstantConditions", "SpellCheckingInspection"})
     @Override
     public void onEnable() {
+        plugin = this;
         ConfigLoader.load();
         MESSAGE_PREFIX = Language.MESSAGE_PREFIX;
-        List<String> aliases = new ArrayList<>(Bukkit.getPluginCommand("iItem").getAliases());
-        aliases.add("iitem");
+        List<String> commands = new ArrayList<>(Bukkit.getPluginCommand("EditLore").getAliases());
+        commands.add("editlore");
         manager = ProtocolLibrary.getProtocolManager();
         manager.addPacketListener(new PacketAdapter(this, ListenerPriority.NORMAL, PacketType.Play.Client.CHAT) {
             @Override
@@ -40,7 +42,7 @@ public class ILoreEdit extends JavaPlugin {
                 if (event.getPacketType() == PacketType.Play.Client.CHAT) {
                     String msg = event.getPacket().getStrings().read(0);
                     if (msg.startsWith("/")) {
-                        if (aliases.contains(Util.getTextLeft(msg, " ").toLowerCase().substring(1))) {
+                        if (commands.contains(Util.getTextLeft(msg, " ").toLowerCase().substring(1))) {
                             Player p = event.getPlayer();
                             if (p.hasPermission("ILoreEdit.use")) {
                                 commandIItem(msg, p);
@@ -63,7 +65,7 @@ public class ILoreEdit extends JavaPlugin {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         switch (command.getName()) {
-            case "iItem":
+            case "EditLore":
                 if (!(sender instanceof Player)) {
                     sender.sendMessage(Language.MESSAGE_PREFIX + Language.canOnlyPlayer);
                 }
@@ -94,8 +96,8 @@ public class ILoreEdit extends JavaPlugin {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (tabList.isEmpty()) {
             tabList.put("ILoreEdit", Arrays.asList("help", "version", "reload"));
-            tabList.put("iItem", Arrays.asList("name", "add", "set", "ins", "del", "clear"));
-            tabList.put("iItem.clear", Arrays.asList("name", "lore"));
+            tabList.put("EditLore", Arrays.asList("name", "add", "set", "ins", "del", "clear"));
+            tabList.put("EditLore.clear", Arrays.asList("name", "lore"));
         }
         return Util.getTabList(args, tabList.get(Util.getTabPath(args, command.getName())));
     }

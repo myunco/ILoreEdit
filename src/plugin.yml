@@ -1,18 +1,16 @@
 name: ILoreEdit
 main: xyz.myunco.iloreedit.ILoreEdit
-version: 2.0.1
+version: 2.0.2
 api-version: 1.13
 author: unco_
 depend: [ProtocolLib]
 commands:
-  iItem:
-    description: 'This is the main command of the plugin.'
-    aliases: ['it', 'll', 'ii', 'lore']
+  EditLore:
+    aliases: [elore, lore, ll, el]
     permission: ILoreEdit.use
     permission-message: "§cYou don't have permission!"
   ILoreEdit:
-    description: 'This is the basic command of the plugin.'
-    aliases: ['ile', 'le']
+    aliases: [ile, le]
     permission: ILoreEdit.use
     permission-message: "§cYou don't have permission!"
 permissions:
