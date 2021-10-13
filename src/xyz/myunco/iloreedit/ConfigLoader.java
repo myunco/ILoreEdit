@@ -6,6 +6,7 @@ public class ConfigLoader {
 
     public static void load() {
         ILoreEdit.plugin.saveDefaultConfig();
+        ILoreEdit.plugin.reloadConfig();
         FileConfiguration config = ILoreEdit.plugin.getConfig();
         Language.enable = config.getString("message.enable");
         Language.disable = config.getString("message.disable");

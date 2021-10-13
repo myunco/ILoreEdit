@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import xyz.myunco.iloreedit.metrics.Metrics;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -52,6 +53,7 @@ public class ILoreEdit extends JavaPlugin {
                 }
             }
         });
+        new Metrics(this, 12935);
         Bukkit.getConsoleSender().sendMessage(PREFIX + Language.enable);
     }
 
