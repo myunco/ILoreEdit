@@ -1,6 +1,7 @@
-package xyz.myunco.iloreedit;
+package xyz.myunco.iloreedit.config;
 
 import org.bukkit.configuration.file.YamlConfiguration;
+import xyz.myunco.iloreedit.ILoreEdit;
 
 import java.io.File;
 import java.io.IOException;

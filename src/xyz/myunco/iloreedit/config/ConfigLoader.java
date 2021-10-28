@@ -1,6 +1,7 @@
-package xyz.myunco.iloreedit;
+package xyz.myunco.iloreedit.config;
 
 import org.bukkit.configuration.file.FileConfiguration;
+import xyz.myunco.iloreedit.ILoreEdit;
 
 public class ConfigLoader {
 

@@ -1,4 +1,4 @@
-package xyz.myunco.iloreedit;
+package xyz.myunco.iloreedit.config;
 
 public class Language {
     public static String prefix;

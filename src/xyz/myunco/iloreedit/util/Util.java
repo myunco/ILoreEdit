@@ -1,8 +1,10 @@
-package xyz.myunco.iloreedit;
+package xyz.myunco.iloreedit.util;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
+import xyz.myunco.iloreedit.ILoreEdit;
+import xyz.myunco.iloreedit.config.Language;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +35,14 @@ public class Util {
     }
 
     public static String translateColor(String str) {
-        return str.contains("&") ? ChatColor.translateAlternateColorCodes('&', str) : str;
+        if (str.contains("&")) {
+            if (ILoreEdit.version > 15) {
+                return ChatColor.translateAlternateColorCodes('&', ColorUtil.processHexColor(ColorUtil.processGradientColor(str)));
+            }
+            return ChatColor.translateAlternateColorCodes('&', str);
+        } else {
+            return str;
+        }
     }
 
     public static String getTabPath(String[] args, String command) {
@@ -45,6 +54,10 @@ public class Util {
     }
 
     public static List<String> getTabList(String[] args, List<String> list) {
+        return getTabList(args, list, false);
+    }
+
+    public static List<String> getTabList(String[] args, List<String> list, boolean listToLowerCase) {
         List<String> ret = new ArrayList<>();
         if (list == null) {
             return ret; //默认情况下 返回空List
@@ -55,8 +68,14 @@ public class Util {
         }
         String arg = args[args.length - 1].toLowerCase();
         for (String value : list) {
-            if (value.startsWith(arg)) {
-                ret.add(value);
+            if (listToLowerCase) {
+                if (value.toLowerCase().startsWith(arg)) {
+                    ret.add(value);
+                }
+            } else {
+                if (value.startsWith(arg)) {
+                    ret.add(value);
+                }
             }
         }
         return ret;

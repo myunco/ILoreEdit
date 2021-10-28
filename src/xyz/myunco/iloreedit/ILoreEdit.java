@@ -15,11 +15,16 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import xyz.myunco.iloreedit.config.ConfigLoader;
+import xyz.myunco.iloreedit.config.Language;
+import xyz.myunco.iloreedit.config.TemplateInfo;
 import xyz.myunco.iloreedit.metrics.Metrics;
+import xyz.myunco.iloreedit.util.Util;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -28,8 +33,8 @@ public class ILoreEdit extends JavaPlugin {
     static String messagePrefix;
     static HashMap<String, List<String>> tabList = new HashMap<>();
     static ProtocolManager manager;
-    static ILoreEdit plugin;
-    static int version;
+    public static ILoreEdit plugin;
+    public static int version;
 
     @SuppressWarnings({"ConstantConditions", "SpellCheckingInspection"})
     @Override
@@ -110,11 +115,11 @@ public class ILoreEdit extends JavaPlugin {
             tabList.put("ILoreEdit", Arrays.asList("help", "version", "reload"));
             tabList.put("EditLore", Arrays.asList("name", "add", "set", "ins", "del", "clear", "import", "export", "owner"));
             tabList.put("EditLore.clear", Arrays.asList("name", "lore"));
-            tabList.put("EditLore.owner", new ArrayList<>());
-            tabList.put("EditLore.export", new ArrayList<>());
+            tabList.put("EditLore.owner", Collections.emptyList());
+            tabList.put("EditLore.export", Collections.emptyList());
         }
         if (args.length == 2 && args[0].equalsIgnoreCase("import")) {
-            return Util.getTabList(args, new TemplateInfo(this).getTemplateList());
+            return Util.getTabList(args, new TemplateInfo(this).getTemplateList(), true);
         }
         return Util.getTabList(args, tabList.get(Util.getTabPath(args, command.getName())));
     }
