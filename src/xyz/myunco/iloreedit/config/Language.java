@@ -32,4 +32,9 @@ public class Language {
     public static String templateExported;
     public static String noSkull;
     public static String changedOwner;
+    public static String invalidTemplateName;
+    public static String notSupport;
+    public static String invalidData;
+    public static String setModelData;
+    public static String clearModelData;
 }

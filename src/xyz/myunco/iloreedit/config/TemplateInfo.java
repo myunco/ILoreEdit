@@ -4,7 +4,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import xyz.myunco.iloreedit.ILoreEdit;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,11 +16,19 @@ public class TemplateInfo {
         if (!file.exists()) {
             plugin.saveResource("templates.yml", false);
         }
-        templates = YamlConfiguration.loadConfiguration(file);
+        templates = ConfigLoader.loadConfiguration(file);
     }
 
     public boolean exists(String name) {
         return templates.contains(name);
+    }
+
+    public List<String> getTemplateList() {
+        return new ArrayList<>(templates.getKeys(false));
+    }
+
+    public void delete(String name) {
+        templates.set(name, null);
     }
 
     public String getDisplayName(String name) {
@@ -32,8 +39,12 @@ public class TemplateInfo {
         return templates.getStringList(name + ".lore");
     }
 
-    public List<String> getTemplateList() {
-        return new ArrayList<>(templates.getKeys(false));
+    public int getCustomModelData(String name) {
+        return templates.getInt(name + ".customModelData");
+    }
+
+    public boolean hasCustomModelData(String name) {
+        return templates.contains(name + ".customModelData");
     }
 
     public void setDisplayName(String name, String displayName) {
@@ -44,11 +55,12 @@ public class TemplateInfo {
         templates.set(name + ".lore", lore);
     }
 
-    public void save() {
-        try {
-            templates.save(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void setCustomModelData(String name, Integer data) {
+        templates.set(name + ".customModelData", data);
     }
+
+    public void save() {
+        ConfigLoader.saveConfiguration(templates, file);
+    }
+
 }

@@ -36,7 +36,7 @@ public class Util {
 
     public static String translateColor(String str) {
         if (str.contains("&")) {
-            if (ILoreEdit.version > 15) {
+            if (ILoreEdit.mcVersion > 15) {
                 return ChatColor.translateAlternateColorCodes('&', ColorUtil.processHexColor(ColorUtil.processGradientColor(str)));
             }
             return ChatColor.translateAlternateColorCodes('&', str);

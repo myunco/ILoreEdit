@@ -1,14 +1,26 @@
 package xyz.myunco.iloreedit.config;
 
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import xyz.myunco.iloreedit.ILoreEdit;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 
 public class ConfigLoader {
 
     public static void load() {
         ILoreEdit.plugin.saveDefaultConfig();
-        ILoreEdit.plugin.reloadConfig();
-        FileConfiguration config = ILoreEdit.plugin.getConfig();
+        FileConfiguration config = loadConfiguration(new File(ILoreEdit.plugin.getDataFolder(), "config.yml"));
         Language.enable = config.getString("message.enable");
         Language.disable = config.getString("message.disable");
         Language.prefix = config.getString("message.prefix");
@@ -42,5 +54,38 @@ public class ConfigLoader {
         Language.templateExported = config.getString("message.templateExported");
         Language.noSkull = config.getString("message.noSkull");
         Language.changedOwner = config.getString("message.changedOwner");
+        Language.invalidTemplateName = config.getString("message.invalidTemplateName");
+        Language.notSupport = config.getString("message.notSupport");
+        Language.invalidData = config.getString("message.invalidData");
+        Language.setModelData = config.getString("message.setModelData");
+        Language.clearModelData = config.getString("message.clearModelData");
+    }
+
+    public static YamlConfiguration loadConfiguration(File file) {
+        YamlConfiguration config = new YamlConfiguration();
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
+            StringBuilder builder = new StringBuilder();
+            String line;
+            try {
+                while((line = reader.readLine()) != null) {
+                    builder.append(line).append('\n');
+                }
+            } finally {
+                reader.close();
+            }
+            config.loadFromString(builder.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return config;
+    }
+
+    public static void saveConfiguration(FileConfiguration config, File file) {
+        try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
+            writer.write(config.saveToString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
