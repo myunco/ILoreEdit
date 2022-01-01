@@ -25,7 +25,7 @@ public class Util {
             player.sendMessage(Language.prefix + Language.invalidLine);
             return 0;
         }
-        if (line > loreSize) {
+        if (line > loreSize || line < 0) {
             player.sendMessage(Language.prefix + Language.errorLine);
             return 0;
         } else if (line == 0) {
