@@ -37,4 +37,9 @@ public class Language {
     public static String invalidData;
     public static String setModelData;
     public static String clearModelData;
+    public static String foundNewVersion;
+    public static String downloadLink;
+    public static String majorUpdate;
+    public static String checkUpdateFailed;
+    public static String checkUpdateException;
 }

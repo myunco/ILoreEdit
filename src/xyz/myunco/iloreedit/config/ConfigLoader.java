@@ -1,14 +1,11 @@
 package xyz.myunco.iloreedit.config;
 
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import xyz.myunco.iloreedit.ILoreEdit;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -20,12 +17,19 @@ public class ConfigLoader {
 
     public static void load() {
         ILoreEdit.plugin.saveDefaultConfig();
-        FileConfiguration config = loadConfiguration(new File(ILoreEdit.plugin.getDataFolder(), "config.yml"));
+        YamlConfiguration config = loadConfiguration(new File(ILoreEdit.plugin.getDataFolder(), "config.yml"));
+        Config.checkUpdate = config.getBoolean("checkUpdate");
         Language.enable = config.getString("message.enable");
         Language.disable = config.getString("message.disable");
         Language.prefix = config.getString("message.prefix");
-        final StringBuilder helpMsg = new StringBuilder();
-        config.getStringList("message.helpMsg").forEach(value -> helpMsg.append(value).append("\n"));
+        StringBuilder helpMsg = new StringBuilder();
+        //config.getStringList("message.helpMsg").forEach(line -> helpMsg.append(line).append("\n"));
+        for (String line : config.getStringList("message.helpMsg")) {
+            if (helpMsg.length() != 0) {
+                helpMsg.append('\n');
+            }
+            helpMsg.append(line);
+        }
         Language.helpMsg = helpMsg.toString();
         Language.canOnlyPlayer = config.getString("message.canOnlyPlayer");
         Language.argsError = config.getString("message.argsError");
@@ -59,6 +63,11 @@ public class ConfigLoader {
         Language.invalidData = config.getString("message.invalidData");
         Language.setModelData = config.getString("message.setModelData");
         Language.clearModelData = config.getString("message.clearModelData");
+        Language.foundNewVersion = config.getString("message.foundNewVersion");
+        Language.downloadLink = config.getString("message.downloadLink");
+        Language.majorUpdate = config.getString("message.majorUpdate");
+        Language.checkUpdateFailed = config.getString("message.checkUpdateFailed");
+        Language.checkUpdateException = config.getString("message.checkUpdateException");
     }
 
     public static YamlConfiguration loadConfiguration(File file) {
@@ -68,7 +77,7 @@ public class ConfigLoader {
             StringBuilder builder = new StringBuilder();
             String line;
             try {
-                while((line = reader.readLine()) != null) {
+                while ((line = reader.readLine()) != null) {
                     builder.append(line).append('\n');
                 }
             } finally {
@@ -81,7 +90,7 @@ public class ConfigLoader {
         return config;
     }
 
-    public static void saveConfiguration(FileConfiguration config, File file) {
+    public static void saveConfiguration(YamlConfiguration config, File file) {
         try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
             writer.write(config.saveToString());
         } catch (IOException e) {

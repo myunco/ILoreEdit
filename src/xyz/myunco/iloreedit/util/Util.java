@@ -1,11 +1,17 @@
 package xyz.myunco.iloreedit.util;
 
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
 import xyz.myunco.iloreedit.ILoreEdit;
 import xyz.myunco.iloreedit.config.Language;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,4 +106,38 @@ public class Util {
     public static String[] getArgs(String arg) {
         return arg.split(" ");
     }
+
+    public static void checkVersionUpdate(CommandSender sender) {
+        try {
+            HttpURLConnection conn = (HttpURLConnection) new URL("https://myunco.sinacloud.net/808FB093/version.txt").openConnection();
+            int code = conn.getResponseCode();
+            if (code == HttpURLConnection.HTTP_OK) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String latestVersion = reader.readLine();
+                if (!ILoreEdit.version.equals(latestVersion)) {
+                    String[] latest = latestVersion.split("\\."); // version: x.x.x
+                    String[] current = ILoreEdit.version.split("\\.");
+                    boolean majorUpdate;
+                    if (!latest[0].equals(current[0])) {
+                        majorUpdate = true;
+                    } else {
+                        majorUpdate = !latest[1].equals(current[1]);
+                    }
+                    String str = Language.foundNewVersion
+                            .replace("{current}", ILoreEdit.version)
+                            .replace("{latest}", latestVersion);
+                    ILoreEdit.sendMessage(sender, (majorUpdate ? Language.majorUpdate + str : str));
+                    ILoreEdit.sendMessage(sender, Language.downloadLink + "https://www.mcbbs.net/thread-1160634-1-1.html");
+                }
+                reader.close();
+                conn.disconnect();
+            } else {
+                ILoreEdit.sendMessage(sender, Language.checkUpdateFailed + code);
+            }
+        } catch (IOException e) {
+            ILoreEdit.sendMessage(sender, Language.checkUpdateException);
+            e.printStackTrace();
+        }
+    }
+
 }

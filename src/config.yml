@@ -1,7 +1,10 @@
+#检查更新 true为启用 false为禁用
+checkUpdate: true
+
 message:
   enable: '§b已启用.'
   disable: '§7已卸载.'
-  prefix: '§3[§9ILoreEdit§3] §c-> '
+  prefix: '§8[§3ILoreEdit§8] §c-> '
   helpMsg:
     - '§e===========§bILoreEdit§e==========='
     - '§a/lore name <名字> §7---- §b设置物品名字'
@@ -11,9 +14,11 @@ message:
     - '§a/lore del [行号] §7---- §b删除指定行的Lore,不指定行号则删除末行'
     - '§a/lore clear name §7---- §b清除物品名字'
     - '§a/lore clear lore §7---- §b清除所有Lore'
+    - '§a/lore clear model §7---- §b清除自定义模型数据'
     - '§a/lore import <模板名> §7---- §b导入指定的模板'
     - '§a/lore export <模板名> §7---- §b导出到指定的模板'
     - '§a/lore owner <玩家名> §7---- §b修改头颅主人'
+    - '§a/lore model <模型数据> §7---- §b设置自定义模型数据'
     - '§e/ILoreEdit help §7---- §a查看指令帮助'
     - '§e/ILoreEdit reload §7---- §a重载插件配置'
     - '§e/ILoreEdit version §7---- §a查看插件版本'
@@ -49,3 +54,8 @@ message:
   invalidData: '§4你输入的模型数据不是一个有效的数字.'
   setModelData: '§a已设置自定义模型数据.'
   clearModelData: '§a已清除自定义模型数据.'
+  foundNewVersion: '§c发现新版本可用! §b当前版本: {current} §d最新版本: {latest}'
+  downloadLink: '§a下载地址: '
+  majorUpdate: '§e(有大更新)'
+  checkUpdateFailed: '§e检查更新失败, 状态码: '
+  checkUpdateException: '§4检查更新时发生IO异常.'
