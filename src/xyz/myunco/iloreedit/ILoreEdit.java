@@ -43,6 +43,10 @@ public class ILoreEdit extends JavaPlugin {
     @Override
     public void onEnable() {
         init();
+        if (!getServer().getPluginManager().isPluginEnabled("ProtocolLib")) {
+            getLogger().info("未找到ProtocolLib插件, 目前无法使用");
+            return;
+        }
         final List<String> commands = new ArrayList<>(Bukkit.getPluginCommand("EditLore").getAliases());
         commands.add("editlore");
         manager = ProtocolLibrary.getProtocolManager();
