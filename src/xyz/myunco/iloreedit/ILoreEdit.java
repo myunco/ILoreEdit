@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import xyz.myunco.iloreedit.command.TabComplete;
 import xyz.myunco.iloreedit.config.Config;
 import xyz.myunco.iloreedit.config.ConfigLoader;
 import xyz.myunco.iloreedit.config.Language;
@@ -147,9 +148,9 @@ public class ILoreEdit extends JavaPlugin {
             tabList.put("EditLore.export", Collections.emptyList());
         }
         if (args.length == 2 && args[0].equalsIgnoreCase("import")) {
-            return Util.getTabList(args, new TemplateInfo(this).getTemplateList(), true);
+            return TabComplete.getCompleteList(args, new TemplateInfo(this).getTemplateList(), true);
         }
-        return Util.getTabList(args, tabList.get(Util.getTabPath(args, command.getName())));
+        return TabComplete.getCompleteList(args, TabComplete.getTabPath(args, command.getName()));
     }
 
     @SuppressWarnings({"deprecation"})
