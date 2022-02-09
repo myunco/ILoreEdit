@@ -25,18 +25,15 @@ import xyz.myunco.iloreedit.util.Util;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class ILoreEdit extends JavaPlugin {
-    private static final HashMap<String, List<String>> tabList = new HashMap<>();
     private static ProtocolManager manager;
     public static ILoreEdit plugin;
     public static int mcVersion;
+    private boolean protocol;
     private Timer timer;
     public static String version;
 
@@ -44,7 +41,8 @@ public class ILoreEdit extends JavaPlugin {
     @Override
     public void onEnable() {
         init();
-        if (!getServer().getPluginManager().isPluginEnabled("ProtocolLib")) {
+        protocol = getServer().getPluginManager().isPluginEnabled("ProtocolLib");
+        if (!protocol) {
             getLogger().info("未找到ProtocolLib插件, 目前无法使用");
             return;
         }
@@ -72,6 +70,7 @@ public class ILoreEdit extends JavaPlugin {
 
     private void init() {
         plugin = this;
+        //TODO
         version = getDescription().getVersion();
         ConfigLoader.load();
         if (!new File(plugin.getDataFolder(), "templates.yml").exists()) {
@@ -122,7 +121,7 @@ public class ILoreEdit extends JavaPlugin {
                 }
                 switch (args[0].toLowerCase()) {
                     case "version":
-                        sendMessage(sender, "§bVersion§e: §a" + version);
+                        sendMessage(sender, "§bVersion§e: §a" + getDescription().getVersion());
                         break;
                     case "reload":
                         stopCheckUpdate();
@@ -140,13 +139,6 @@ public class ILoreEdit extends JavaPlugin {
     @SuppressWarnings("NullableProblems")
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        if (tabList.isEmpty()) {
-            tabList.put("ILoreEdit", Arrays.asList("help", "version", "reload"));
-            tabList.put("EditLore", Arrays.asList("name", "add", "set", "ins", "del", "clear", "import", "export", "owner", "model"));
-            tabList.put("EditLore.clear", Arrays.asList("name", "lore", "model"));
-            tabList.put("EditLore.owner", Collections.emptyList());
-            tabList.put("EditLore.export", Collections.emptyList());
-        }
         if (args.length == 2 && args[0].equalsIgnoreCase("import")) {
             return TabComplete.getCompleteList(args, new TemplateInfo(this).getTemplateList(), true);
         }
