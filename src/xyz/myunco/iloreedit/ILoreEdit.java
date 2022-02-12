@@ -42,9 +42,8 @@ public class ILoreEdit extends JavaPlugin {
     public void onEnable() {
         init();
         protocol = getServer().getPluginManager().isPluginEnabled("ProtocolLib");
-        if (!protocol) {
-            getLogger().info("未找到ProtocolLib插件, 目前无法使用");
-            return;
+        if (!protocol && mcVersion < 16) {
+            getLogger().info("未找到ProtocolLib插件, 将不支持直接连续空格。");
         }
         final List<String> commands = new ArrayList<>(Bukkit.getPluginCommand("EditLore").getAliases());
         commands.add("editlore");
