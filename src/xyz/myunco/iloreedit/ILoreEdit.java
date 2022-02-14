@@ -33,7 +33,7 @@ public class ILoreEdit extends JavaPlugin {
     private static ProtocolManager manager;
     public static ILoreEdit plugin;
     public static int mcVersion;
-    private boolean protocol;
+    private boolean enableProtocol;
     private Timer timer;
     public static String version;
 
@@ -41,27 +41,29 @@ public class ILoreEdit extends JavaPlugin {
     @Override
     public void onEnable() {
         init();
-        protocol = getServer().getPluginManager().isPluginEnabled("ProtocolLib");
-        if (!protocol && mcVersion < 16) {
+        enableProtocol = getServer().getPluginManager().isPluginEnabled("ProtocolLib");
+        if (!enableProtocol && mcVersion < 16) {
             getLogger().info("未找到ProtocolLib插件, 将不支持直接连续空格。");
         }
-        final List<String> commands = new ArrayList<>(Bukkit.getPluginCommand("EditLore").getAliases());
-        commands.add("editlore");
-        manager = ProtocolLibrary.getProtocolManager();
-        manager.addPacketListener(new PacketAdapter(this, ListenerPriority.NORMAL, PacketType.Play.Client.CHAT) {
-            @Override
-            public void onPacketReceiving(PacketEvent event) {
-                String msg = event.getPacket().getStrings().read(0);
-                if (msg.startsWith("/")) {
-                    if (commands.contains(Util.getTextLeft(msg, " ").substring(1).toLowerCase())) {
-                        Player player = event.getPlayer();
-                        if (player.hasPermission("ILoreEdit.use")) {
-                            commandEditLore(msg.replace("\"\"", " "), player);
+        if (enableProtocol) {
+            final List<String> commands = new ArrayList<>(Bukkit.getPluginCommand("EditLore").getAliases());
+            commands.add("editlore");
+            manager = ProtocolLibrary.getProtocolManager();
+            manager.addPacketListener(new PacketAdapter(this, ListenerPriority.NORMAL, PacketType.Play.Client.CHAT) {
+                @Override
+                public void onPacketReceiving(PacketEvent event) {
+                    String msg = event.getPacket().getStrings().read(0);
+                    if (msg.startsWith("/")) {
+                        if (commands.contains(Util.getTextLeft(msg, " ").substring(1).toLowerCase())) {
+                            Player player = event.getPlayer();
+                            if (player.hasPermission("ILoreEdit.use")) {
+                                commandEditLore(msg.replace("\"\"", " "), player);
+                            }
                         }
                     }
                 }
-            }
-        });
+            });
+        }
         new Metrics(this, 12935);
         Bukkit.getConsoleSender().sendMessage("§8[§3ILoreEdit§8] " + Language.enable);
         checkUpdate();
@@ -80,7 +82,9 @@ public class ILoreEdit extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        manager.removePacketListeners(this);
+        if (enableProtocol) {
+            manager.removePacketListeners(this);
+        }
         stopCheckUpdate();
         Bukkit.getConsoleSender().sendMessage("§8[§3ILoreEdit§8] " + Language.disable);
     }
