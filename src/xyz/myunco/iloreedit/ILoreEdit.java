@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -37,7 +38,6 @@ public class ILoreEdit extends JavaPlugin {
     private Timer timer;
     public static String version;
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     public void onEnable() {
         init();
@@ -45,8 +45,14 @@ public class ILoreEdit extends JavaPlugin {
         if (!enableProtocol && mcVersion < 16) {
             getLogger().info("未找到ProtocolLib插件, 将不支持直接连续空格。");
         }
-        if (enableProtocol) {
-            final List<String> commands = new ArrayList<>(Bukkit.getPluginCommand("EditLore").getAliases());
+        PluginCommand iLoreEdit = getCommand("ILoreEdit");
+        if (iLoreEdit != null) {
+            iLoreEdit.setTabCompleter(this);
+        }
+        PluginCommand editLore = getCommand("EditLore");
+        if (enableProtocol && editLore != null) {
+            editLore.setTabCompleter(this);
+            final List<String> commands = new ArrayList<>(editLore.getAliases());
             commands.add("editlore");
             manager = ProtocolLibrary.getProtocolManager();
             manager.addPacketListener(new PacketAdapter(this, ListenerPriority.NORMAL, PacketType.Play.Client.CHAT) {
@@ -64,9 +70,9 @@ public class ILoreEdit extends JavaPlugin {
                 }
             });
         }
+        checkUpdate();
         new Metrics(this, 12935);
         Bukkit.getConsoleSender().sendMessage("§8[§3ILoreEdit§8] " + Language.enable);
-        checkUpdate();
     }
 
     private void init() {
