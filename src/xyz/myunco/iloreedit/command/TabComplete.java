@@ -17,7 +17,7 @@ public class TabComplete {
         tabListMap.put("EditLore.export", Collections.emptyList());
     }
 
-    public static List<String> getTabPath(String[] args, String command) {
+    public static List<String> getTabList(String[] args, String command) {
         StringBuilder builder = new StringBuilder(command);
         for (int i = 1; i < args.length; i++) {
             builder.append(".").append(args[i - 1].toLowerCase());

@@ -15,7 +15,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Util {
+public class Utils {
 
     public static int getLine(Player player, String number, int loreSize) {
         int line;

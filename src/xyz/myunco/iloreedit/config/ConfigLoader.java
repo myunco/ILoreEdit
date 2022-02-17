@@ -24,7 +24,6 @@ public class ConfigLoader {
         Language.disable = config.getString("message.disable", "§7已卸载.");
         Language.prefix = config.getString("message.prefix", "§8[§3ILoreEdit§8] §c-> ");
         StringBuilder helpMsg = new StringBuilder();
-        //config.getStringList("message.helpMsg").forEach(line -> helpMsg.append(line).append("\n"));
         for (String line : config.getStringList("message.helpMsg")) {
             if (helpMsg.length() != 0) {
                 helpMsg.append('\n');

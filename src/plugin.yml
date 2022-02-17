@@ -3,17 +3,20 @@ main: xyz.myunco.iloreedit.ILoreEdit
 version: 2.5.0-SNAPSHOT
 api-version: 1.13
 author: unco_
+website: https://www.mcbbs.net/thread-1160634-1-1.html
 softdepend:
   - ProtocolLib
 commands:
-  EditLore:
-    aliases: [elore, lore, ll, el]
-    permission: ILoreEdit.use
-    permission-message: "§cYou don't have permission!"
   ILoreEdit:
     aliases: [ile, le]
-    permission: ILoreEdit.use
+    permission: iloreedit.admin
+    permission-message: "§cYou don't have permission!"
+  EditLore:
+    aliases: [elore, lore, ll, el]
+    permission: iloreedit.use
     permission-message: "§cYou don't have permission!"
 permissions:
-  ILoreEdit.use:
+  iloreedit.admin:
+    default: op
+  iloreedit.use:
     default: op
