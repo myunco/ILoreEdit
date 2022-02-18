@@ -4,8 +4,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import xyz.myunco.iloreedit.ILoreEdit;
-import xyz.myunco.iloreedit.config.ConfigLoader;
 import xyz.myunco.iloreedit.config.Language;
+import xyz.myunco.iloreedit.update.UpdateChecker;
 
 import java.util.List;
 
@@ -25,9 +25,8 @@ public class ILoreEditCommand implements TabExecutor {
                 ILoreEdit.sendMessage(sender, "§bVersion§e: §a" + plugin.getDescription().getVersion());
                 break;
             case "reload":
-                plugin.stopCheckUpdate();
-                ConfigLoader.load();
-                plugin.checkUpdate();
+                UpdateChecker.stop();
+                plugin.initConfig();
                 ILoreEdit.sendMessage(sender, Language.reloaded);
                 break;
             default:

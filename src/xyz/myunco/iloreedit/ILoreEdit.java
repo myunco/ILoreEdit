@@ -1,12 +1,7 @@
 package xyz.myunco.iloreedit;
 
-import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.ListenerPriority;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketEvent;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
@@ -23,29 +18,44 @@ import xyz.myunco.iloreedit.config.ConfigLoader;
 import xyz.myunco.iloreedit.config.Language;
 import xyz.myunco.iloreedit.config.TemplateInfo;
 import xyz.myunco.iloreedit.metrics.Metrics;
+import xyz.myunco.iloreedit.update.UpdateChecker;
 import xyz.myunco.iloreedit.util.Utils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class ILoreEdit extends JavaPlugin {
     public ProtocolManager manager;
     public static ILoreEdit plugin;
     public static int mcVersion;
-    public static String version;
-    private Timer timer;
 
     @Override
     public void onEnable() {
-        init();
+        plugin = this;
+        mcVersion = Integer.parseInt(getServer().getBukkitVersion().replace('-', '.').split("\\.")[1]);
         if (!getServer().getPluginManager().isPluginEnabled("ProtocolLib") && mcVersion < 16) {
             getLogger().info("未找到ProtocolLib插件, 将不支持直接连续空格。");
         } else {
             manager = ProtocolLibrary.getProtocolManager();
         }
+        initConfig();
+        initCommand();
+        new Metrics(this, 12935);
+        logMessage("§8[§3ILoreEdit§8] " + Language.enable);
+    }
+
+    public void initConfig() {
+        ConfigLoader.load();
+        if (Config.checkUpdate) {
+            UpdateChecker.start();
+        }
+        if (!new File(plugin.getDataFolder(), "templates.yml").exists()) {
+            plugin.saveResource("templates.yml", false);
+        }
+    }
+
+    private void initCommand() {
         PluginCommand iLoreEdit = getCommand("ILoreEdit");
         if (iLoreEdit != null) {
             iLoreEdit.setExecutor(new ILoreEditCommand());
@@ -58,20 +68,6 @@ public class ILoreEdit extends JavaPlugin {
             editLore.setExecutor(new EditLoreCommand(commands));
             editLore.setTabCompleter((TabCompleter) editLore.getExecutor());
         }
-        checkUpdate();
-        new Metrics(this, 12935);
-        Bukkit.getConsoleSender().sendMessage("§8[§3ILoreEdit§8] " + Language.enable);
-    }
-
-    private void init() {
-        plugin = this;
-        //TODO
-        version = getDescription().getVersion();
-        ConfigLoader.load();
-        if (!new File(plugin.getDataFolder(), "templates.yml").exists()) {
-            plugin.saveResource("templates.yml", false);
-        }
-        mcVersion = Integer.parseInt(Bukkit.getBukkitVersion().replace('-', '.').split("\\.")[1]);
     }
 
     @Override
@@ -79,26 +75,8 @@ public class ILoreEdit extends JavaPlugin {
         if (manager != null) {
             manager.removePacketListeners(this);
         }
-        stopCheckUpdate();
-        Bukkit.getConsoleSender().sendMessage("§8[§3ILoreEdit§8] " + Language.disable);
-    }
-
-    public void checkUpdate() {
-        if (Config.checkUpdate) {
-            timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    Utils.checkVersionUpdate(getServer().getConsoleSender());
-                }
-            }, 12000, 12 * 60 * 60 * 1000);
-        }
-    }
-
-    public void stopCheckUpdate() {
-        if (Config.checkUpdate) {
-            timer.cancel();
-        }
+        UpdateChecker.stop();
+        logMessage("§8[§3ILoreEdit§8] " + Language.disable);
     }
 
     @SuppressWarnings({"deprecation"})
@@ -332,4 +310,10 @@ public class ILoreEdit extends JavaPlugin {
     public static void sendMessage(CommandSender sender, String msg) {
         sender.sendMessage(Language.prefix + msg);
     }
+
+    public void logMessage(String msg) {
+        //TODO
+        getServer().getConsoleSender().sendMessage(Language.prefix + msg);
+    }
+
 }

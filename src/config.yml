@@ -1,30 +1,15 @@
+#配置文件版本号 请勿修改
+version: 1
+
+#语言 默认为简体中文
+language: 'zh_cn'
+
 #检查更新 true为启用 false为禁用
 checkUpdate: true
 
 message:
-  enable: '§b已启用.'
-  disable: '§7已卸载.'
-  prefix: '§8[§3ILoreEdit§8] §c-> '
-  helpMsg:
-    - '§e===========§bILoreEdit§e==========='
-    - '§a/lore name <名字> §7---- §b设置物品名字'
-    - '§a/lore add <内容> §7---- §b添加一行Lore'
-    - '§a/lore set <行号> <内容> §7---- §b修改指定行的Lore'
-    - '§a/lore ins <行号> <内容> §7---- §b在指定行插入Lore'
-    - '§a/lore del [行号] §7---- §b删除指定行的Lore,不指定行号则删除末行'
-    - '§a/lore clear name §7---- §b清除物品名字'
-    - '§a/lore clear lore §7---- §b清除所有Lore'
-    - '§a/lore clear model §7---- §b清除自定义模型数据'
-    - '§a/lore import <模板名> §7---- §b导入指定的模板'
-    - '§a/lore export <模板名> §7---- §b导出到指定的模板'
-    - '§a/lore owner <玩家名> §7---- §b修改头颅主人'
-    - '§a/lore model <模型数据> §7---- §b设置自定义模型数据'
-    - '§e/ILoreEdit help §7---- §a查看指令帮助'
-    - '§e/ILoreEdit reload §7---- §a重载插件配置'
-    - '§e/ILoreEdit version §7---- §a查看插件版本'
   canOnlyPlayer: '§b本命令只能玩家使用!'
   argsError: '§c错误的命令参数!'
-  reloaded: '§a配置文件重载完成.'
   noItem: '§d你确定你手里有物品???'
   editDisplayName: '§a已修改物品显示名.'
   addLore: '§a已添加Lore.'
