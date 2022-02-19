@@ -29,6 +29,9 @@ public class ILoreEditCommand implements TabExecutor {
                 plugin.initConfig();
                 ILoreEdit.sendMessage(sender, Language.reloaded);
                 break;
+            case "help":
+                //TODO
+                break;
             default:
                 sender.sendMessage(Language.helpMsg);
         }
