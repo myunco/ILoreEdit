@@ -11,10 +11,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import xyz.myunco.iloreedit.command.ChatPacketListener;
 import xyz.myunco.iloreedit.command.EditLoreCommand;
 import xyz.myunco.iloreedit.command.ILoreEditCommand;
 import xyz.myunco.iloreedit.config.Config;
-import xyz.myunco.iloreedit.config.ConfigLoader;
 import xyz.myunco.iloreedit.config.Language;
 import xyz.myunco.iloreedit.config.TemplateInfo;
 import xyz.myunco.iloreedit.metrics.Metrics;
@@ -23,6 +23,7 @@ import xyz.myunco.iloreedit.util.Utils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ILoreEdit extends JavaPlugin {
@@ -42,11 +43,11 @@ public class ILoreEdit extends JavaPlugin {
         initConfig();
         initCommand();
         new Metrics(this, 12935);
-        logMessage("§8[§3ILoreEdit§8] " + Language.enable);
+        logMessage(Language.enableMessage);
     }
 
     public void initConfig() {
-        ConfigLoader.load();
+        Config.loadConfig();
         if (Config.checkUpdate) {
             UpdateChecker.start();
         }
@@ -63,10 +64,13 @@ public class ILoreEdit extends JavaPlugin {
         }
         PluginCommand editLore = getCommand("EditLore");
         if (editLore != null) {
-            List<String> commands = new ArrayList<>(editLore.getAliases());
-            commands.add("editlore");
-            editLore.setExecutor(new EditLoreCommand(commands));
+            editLore.setExecutor(new EditLoreCommand());
             editLore.setTabCompleter((TabCompleter) editLore.getExecutor());
+            if (manager != null) {
+                List<String> commands = new ArrayList<>(editLore.getAliases());
+                commands.add("editlore");
+                new ChatPacketListener(commands, this);
+            }
         }
     }
 
@@ -76,86 +80,90 @@ public class ILoreEdit extends JavaPlugin {
             manager.removePacketListeners(this);
         }
         UpdateChecker.stop();
-        logMessage("§8[§3ILoreEdit§8] " + Language.disable);
+        logMessage(Language.disableMessage);
+    }
+
+    public ClassLoader classLoader() {
+        return getClassLoader();
     }
 
     @SuppressWarnings({"deprecation"})
-    public void commandEditLore(Player player, String arg, String[] args) {
-        if (args[0].isEmpty()) {
-            sendMessage(player, Language.usage);
-            sendMessage(player, Language.usageEditLore);
+    public void commandEditLore(CommandSender sender, Player player, String arg, String[] args) {
+        if (args.length == 0 || args[0].isEmpty()) {
+            sendMessage(sender, Language.commandEditloreUsage);
             return;
         }
-        ItemStack item;
-        if (mcVersion > 8) {
-            item = player.getInventory().getItemInMainHand();
-        } else {
-            item = player.getItemInHand();
-        }
+        logMessage("arg = " + arg);
+        logMessage("args = " + Arrays.toString(args));
+        ItemStack item = mcVersion > 8 ? player.getInventory().getItemInMainHand() : player.getItemInHand();
         ItemMeta meta = item.getItemMeta();
         if (item.getType() == Material.AIR || meta == null) {
-            sendMessage(player, Language.noItem);
+            sendMessage(sender, Language.commandEditloreNotItem);
             return;
         }
         switch (args[0].toLowerCase()) {
             case "name":
                 //ll name test
                 if (args.length < 2) {
-                    sendMessage(player, Language.argsError);
+                    sendMessage(sender, Language.commandEditloreArgsError);
+                    sendMessage(sender, Language.commandEditloreNameUsage);
                     return;
                 }
                 meta.setDisplayName(Utils.translateColor(Utils.getTextRight(arg, args[0] + " ")));
-                sendMessage(player, Language.editDisplayName);
+                sendMessage(sender, Language.commandEditloreName);
                 break;
             case "add": {
                 List<String> lore = Utils.getLore(meta);
                 //ll add test
                 if (args.length < 2) {
-                    sendMessage(player, Language.argsError);
+                    sendMessage(sender, Language.commandEditloreArgsError);
+                    sendMessage(sender, Language.commandEditloreAddUsage);
                     return;
                 }
                 lore.add(Utils.translateColor(Utils.getTextRight(arg, args[0] + " ")));
                 meta.setLore(lore);
-                sendMessage(player, Language.addLore);
+                sendMessage(sender, Language.commandEditloreAdd);
                 break;
             }
             case "set": {
                 List<String> lore = Utils.getLore(meta);
                 //ll set 1 test
                 if (args.length < 3) {
-                    sendMessage(player, Language.argsError);
+                    sendMessage(sender, Language.commandEditloreArgsError);
+                    sendMessage(sender, Language.commandEditloreSetUsage);
                     return;
                 } else if (lore.size() == 0) {
-                    sendMessage(player, Language.noLore);
+                    sendMessage(sender, Language.commandEditloreSetNotLore);
                     return;
                 }
-                int line = Utils.getLine(player, args[1], lore.size());
+                int line = Utils.getLine(sender, args[1], lore.size());
                 if (line == 0) {
                     return;
                 }
                 lore.set(line - 1, Utils.translateColor(Utils.getTextRight(arg, args[1] + " ")));
                 meta.setLore(lore);
-                sendMessage(player, Language.setLore);
+                sendMessage(sender, Language.commandEditloreSet);
                 break;
             }
             case "ins": {
                 List<String> lore = Utils.getLore(meta);
                 //ll ins 1 test
                 if (args.length < 3) {
-                    sendMessage(player, Language.argsError);
+                    sendMessage(sender, Language.commandEditloreArgsError);
+                    sendMessage(sender, Language.commandEditloreInsUsage);
                     return;
                 }
                 if (lore.size() == 0) {
-                    sendMessage(player, Language.noLore_ins);
+                    sendMessage(sender, Language.commandEditloreInsNotLore);
                     return;
                 }
-                int line = Utils.getLine(player, args[1], lore.size());
+                int line = Utils.getLine(sender, args[1], lore.size());
                 if (line == 0) {
                     return;
                 }
                 lore.add(line - 1, Utils.translateColor(Utils.getTextRight(arg, args[1] + " ")));
                 meta.setLore(lore);
-                sendMessage(player, Language.insLore);
+                sendMessage(sender, Language.commandEditloreIns);
                 break;
             }
             case "del": {
@@ -163,60 +171,64 @@ public class ILoreEdit extends JavaPlugin {
                 //ll del 1
                 List<String> lore = Utils.getLore(meta);
                 if (args.length > 2) {
-                    sendMessage(player, Language.argsError);
+                    sendMessage(sender, Language.commandEditloreArgsError);
+                    sendMessage(sender, Language.commandEditloreDelUsage);
                     return;
                 }
                 if (lore.size() == 0) {
-                    sendMessage(player, Language.noLore_del);
+                    sendMessage(sender, Language.commandEditloreDelNotLore);
                     return;
                 }
                 int line;
                 if (args.length == 1) {
                     line = lore.size();
                 } else {
-                    line = Utils.getLine(player, args[1], lore.size());
+                    line = Utils.getLine(sender, args[1], lore.size());
                     if (line == 0) {
                         return;
                     }
                 }
                 lore.remove(line - 1);
                 meta.setLore(lore);
-                sendMessage(player, Language.delLore);
+                sendMessage(sender, Language.commandEditloreDel);
                 break;
             }
             case "clear":
                 //ll clear name
                 //ll clear lore
                 if (args.length != 2) {
-                    sendMessage(player, Language.argsError);
+                    sendMessage(sender, Language.commandEditloreArgsError);
+                    sendMessage(sender, Language.commandEditloreClearUsage);
                     return;
                 }
                 switch (args[1].toLowerCase()) {
                     case "name":
                         meta.setDisplayName(null);
-                        sendMessage(player, Language.clearDisplayName);
+                        sendMessage(sender, Language.commandEditloreClearName);
                         break;
                     case "lore":
                         meta.setLore(null);
-                        sendMessage(player, Language.clearLore);
+                        sendMessage(sender, Language.commandEditloreClearLore);
                         break;
                     case "model":
                         if (mcVersion < 14) {
-                            sendMessage(player, Language.notSupport);
+                            sendMessage(sender, Language.commandEditloreModelNotSupport);
                             return;
                         }
                         meta.setCustomModelData(null);
-                        sendMessage(player, Language.clearModelData);
+                        sendMessage(sender, Language.commandEditloreClearModel);
                         break;
                     default:
-                        sendMessage(player, Language.argsError);
+                        sendMessage(sender, Language.commandEditloreArgsError);
+                        sendMessage(sender, Language.commandEditloreClearUsage);
                         return;
                 }
                 break;
             case "import": {
                 //ll import test
                 if (args.length != 2) {
-                    sendMessage(player, Language.argsError);
+                    sendMessage(sender, Language.commandEditloreArgsError);
+                    sendMessage(sender, Language.commandEditloreImportUsage);
                     return;
                 }
                 TemplateInfo template = new TemplateInfo(this); //模板需要实时更新 所以每次都重新加载
@@ -226,9 +238,9 @@ public class ILoreEdit extends JavaPlugin {
                     if (mcVersion >= 14 && template.hasCustomModelData(args[1])) {
                         meta.setCustomModelData(template.getCustomModelData(args[1]));
                     }
-                    sendMessage(player, Language.templateImported);
+                    sendMessage(sender, Language.commandEditloreImport);
                 } else {
-                    sendMessage(player, Language.templateNotExist);
+                    sendMessage(sender, Language.commandEditloreTemplateDontExist);
                     return;
                 }
                 break;
@@ -236,13 +248,14 @@ public class ILoreEdit extends JavaPlugin {
             case "export": {
                 //ll export test
                 if (args.length != 2) {
-                    sendMessage(player, Language.argsError);
+                    sendMessage(sender, Language.commandEditloreArgsError);
+                    sendMessage(sender, Language.commandEditloreExportUsage);
                     return;
                 } else if (!meta.hasDisplayName() && !meta.hasLore()) {
-                    sendMessage(player, Language.noExport);
+                    sendMessage(sender, Language.commandEditloreExportNone);
                     return;
                 } else if (args[1].indexOf('.') != -1) {
-                    sendMessage(player, Language.invalidTemplateName);
+                    sendMessage(sender, Language.commandEditloreTemplateInvalidName);
                     return;
                 }
                 TemplateInfo template = new TemplateInfo(this);
@@ -260,60 +273,57 @@ public class ILoreEdit extends JavaPlugin {
                     template.setCustomModelData(args[1], meta.getCustomModelData());
                 }
                 template.save();
-                sendMessage(player, Language.templateExported);
+                sendMessage(sender, Language.commandEditloreExport);
                 break;
             }
             case "owner":
                 //ll owner test
                 if (args.length != 2) {
-                    sendMessage(player, Language.argsError);
+                    sendMessage(sender, Language.commandEditloreArgsError);
+                    sendMessage(sender, Language.commandEditloreOwnerUsage);
                     return;
                 }
                 if (meta instanceof SkullMeta) {
                     ((SkullMeta) meta).setOwner(args[1]);
-                    sendMessage(player, Language.changedOwner);
+                    sendMessage(sender, Language.commandEditloreOwner);
                 } else {
-                    sendMessage(player, Language.noSkull);
+                    sendMessage(sender, Language.commandEditloreOwnerNotSkull);
                 }
                 break;
             case "model": {
                 //ll model 1
                 if (args.length != 2) {
-                    sendMessage(player, Language.argsError);
+                    sendMessage(sender, Language.commandEditloreArgsError);
+                    sendMessage(sender, Language.commandEditloreModelUsage);
                     return;
                 } else if (mcVersion < 14) {
-                    sendMessage(player, Language.notSupport);
+                    sendMessage(sender, Language.commandEditloreModelNotSupport);
                     return;
                 }
                 try {
                     int data = Integer.parseInt(args[1]);
                     meta.setCustomModelData(data);
-                    sendMessage(player, Language.setModelData);
+                    sendMessage(sender, Language.commandEditloreModel);
                 } catch (NumberFormatException e) {
-                    sendMessage(player, Language.invalidData);
+                    sendMessage(sender, Language.commandEditloreModelInvalidData);
                 }
                 break;
             }
             default:
-                sendMessage(player, Language.argsError);
+                sendMessage(sender, Language.commandEditloreUnknown);
                 return;
         }
         if (!item.setItemMeta(meta)) {
-            sendMessage(player, Language.saveError);
+            sendMessage(sender, Language.commandEditloreSaveError);
         }
     }
-    
-    public static void sendMessage(Player player, String msg) {
-        player.sendMessage(Language.prefix + msg);
-    }
-    
+
     public static void sendMessage(CommandSender sender, String msg) {
-        sender.sendMessage(Language.prefix + msg);
+        sender.sendMessage(Language.messagePrefix + msg);
     }
 
     public void logMessage(String msg) {
-        //TODO
-        getServer().getConsoleSender().sendMessage(Language.prefix + msg);
+        getServer().getConsoleSender().sendMessage(Language.logPrefix + msg);
     }
 
 }

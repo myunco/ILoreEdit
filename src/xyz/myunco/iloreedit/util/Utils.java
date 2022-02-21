@@ -1,7 +1,7 @@
 package xyz.myunco.iloreedit.util;
 
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.meta.ItemMeta;
 import xyz.myunco.iloreedit.ILoreEdit;
 import xyz.myunco.iloreedit.config.Language;
@@ -11,19 +11,16 @@ import java.util.List;
 
 public class Utils {
 
-    public static int getLine(Player player, String number, int loreSize) {
+    public static int getLine(CommandSender sender, String number, int loreSize) {
         int line;
         try {
             line = Integer.parseInt(number);
         } catch (NumberFormatException e) {
-            player.sendMessage(Language.prefix + Language.invalidLine);
+            ILoreEdit.sendMessage(sender, Language.commandEditloreInvalidLine);
             return 0;
         }
-        if (line > loreSize || line < 0) {
-            player.sendMessage(Language.prefix + Language.errorLine);
-            return 0;
-        } else if (line == 0) {
-            player.sendMessage(Language.prefix + Language.zeroLine);
+        if (line > loreSize || line < 1) {
+            ILoreEdit.sendMessage(sender, Language.replaceArgs(Language.commandEditloreErrorLine, line));
             return 0;
         }
         return line;
@@ -63,6 +60,11 @@ public class Utils {
 
     public static String[] getArgs(String arg) {
         return arg.split(" ");
+    }
+
+
+    public static String replaceSpace(String text) {
+        return text.indexOf('"') == -1 ? text : text.replace("\"\"", " ");
     }
 
 }

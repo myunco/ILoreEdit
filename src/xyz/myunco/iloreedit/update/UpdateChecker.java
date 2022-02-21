@@ -23,20 +23,18 @@ public class UpdateChecker {
             @Override
             public void run() {
                 try {
-                    CheckResult result = checkVersionUpdate("https://myunco.sinacloud.net/B821CED3/version.txt");
+                    CheckResult result = checkVersionUpdate("https://myunco.sinacloud.net/808FB093/version.txt");
                     if (result.getResultType() == CheckResult.ResultType.SUCCESS) {
                         if (result.hasNewVersion()) {
-                            String str = Language.foundNewVersion
-                                    .replace("{current}", currentVersion)
-                                    .replace("{latest}", result.getLatestVersion());
-                            plugin.logMessage(result.hasMajorUpdate() ? Language.majorUpdate + str : str);
-                            plugin.logMessage(Language.downloadLink + "https://www.mcbbs.net/thread-1160634-1-1.html");
+                            String str = Language.replaceArgs(Language.updateFoundNewVersion, currentVersion, result.getLatestVersion());
+                            plugin.logMessage(result.hasMajorUpdate() ? Language.updateMajorUpdate + str : str);
+                            plugin.logMessage(Language.updateDownloadLink + "https://www.mcbbs.net/thread-1160634-1-1.html");
                         }
                     } else {
-                        plugin.logMessage(Language.checkUpdateFailed + result.getResponseCode());
+                        plugin.logMessage(Language.updateCheckFailure + result.getResponseCode());
                     }
                 } catch (IOException e) {
-                    plugin.logMessage(Language.checkUpdateException);
+                    plugin.logMessage(Language.updateCheckException);
                     e.printStackTrace();
                 }
             }

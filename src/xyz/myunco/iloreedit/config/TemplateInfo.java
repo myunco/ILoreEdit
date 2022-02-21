@@ -16,7 +16,7 @@ public class TemplateInfo {
         if (!file.exists()) {
             plugin.saveResource("templates.yml", false);
         }
-        templates = ConfigLoader.loadConfiguration(file);
+        templates = Config.loadConfiguration(file);
     }
 
     public boolean exists(String name) {
@@ -60,7 +60,7 @@ public class TemplateInfo {
     }
 
     public void save() {
-        ConfigLoader.saveConfiguration(templates, file);
+        Config.saveConfiguration(templates, file);
     }
 
 }
