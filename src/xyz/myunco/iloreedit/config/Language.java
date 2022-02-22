@@ -52,8 +52,11 @@ public class Language {
     public static String commandEditloreDelNotLore;
     public static String commandEditloreDel;
     public static String commandEditloreClearUsage;
+    public static String commandEditloreClearNameNone;
     public static String commandEditloreClearName;
+    public static String commandEditloreClearLoreNone;
     public static String commandEditloreClearLore;
+    public static String commandEditloreClearModelNone;
     public static String commandEditloreClearModel;
     public static String commandEditloreTemplateDontExist;
     public static String commandEditloreTemplateInvalidName;
@@ -149,8 +152,11 @@ public class Language {
         commandEditloreDelNotLore = config.getString("command-editlore-del-not-lore", "§b该物品没有Lore, 你要删除啥?");
         commandEditloreDel = config.getString("command-editlore-del", "§a已删除Lore.");
         commandEditloreClearUsage = config.getString("command-editlore-clear-usage", "§6用法: §a/lore clear <name/lore/model> §7---- §b清除物品显示名/Lore/自定义模型数据");
+        commandEditloreClearNameNone = config.getString("command-editlore-clear-name-none", "§b该物品没有显示名.");
         commandEditloreClearName = config.getString("command-editlore-clear-name", "§a已清除物品显示名.");
+        commandEditloreClearLoreNone = config.getString("command-editlore-clear-lore-none", "§b该物品没有Lore.");
         commandEditloreClearLore = config.getString("command-editlore-clear-lore", "§a已清除Lore.");
+        commandEditloreClearModelNone = config.getString("command-editlore-clear-model-none", "§b该物品没有自定义模型数据.");
         commandEditloreClearModel = config.getString("command-editlore-clear-model", "§a已清除自定义模型数据.");
         commandEditloreTemplateDontExist = config.getString("command-editlore-template-dont-exist", "§c指定的模板不存在!");
         commandEditloreTemplateInvalidName = config.getString("command-editlore-template-invalid-name", "§c无效的模板名称!");

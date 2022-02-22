@@ -16,11 +16,11 @@ public class Utils {
         try {
             line = Integer.parseInt(number);
         } catch (NumberFormatException e) {
-            ILoreEdit.sendMessage(sender, Language.commandEditloreInvalidLine);
+            sender.sendMessage(Language.messagePrefix + Language.commandEditloreInvalidLine);
             return 0;
         }
         if (line > loreSize || line < 1) {
-            ILoreEdit.sendMessage(sender, Language.replaceArgs(Language.commandEditloreErrorLine, line));
+            sender.sendMessage(Language.messagePrefix + Language.replaceArgs(Language.commandEditloreErrorLine, line));
             return 0;
         }
         return line;

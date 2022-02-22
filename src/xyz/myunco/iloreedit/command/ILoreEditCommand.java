@@ -16,23 +16,23 @@ public class ILoreEditCommand implements TabExecutor {
     @SuppressWarnings("NullableProblems")
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length < 1) {
-            ILoreEdit.sendMessage(sender, Language.commandIloreeditUsage);
+            sendMessage(sender, Language.commandIloreeditUsage);
             return true;
         }
         switch (args[0].toLowerCase()) {
             case "help":
-                ILoreEdit.sendMessage(sender, Language.commandIloreeditHelp);
+                sendMessage(sender, Language.commandIloreeditHelp);
                 break;
             case "reload":
                 UpdateChecker.stop();
                 plugin.initConfig();
-                ILoreEdit.sendMessage(sender, Language.commandIloreeditReload);
+                sendMessage(sender, Language.commandIloreeditReload);
                 break;
             case "version":
-                ILoreEdit.sendMessage(sender, Language.replaceArgs(Language.commandIloreeditVersion, plugin.getDescription().getVersion()));
+                sendMessage(sender, Language.replaceArgs(Language.commandIloreeditVersion, plugin.getDescription().getVersion()));
                 break;
             default:
-                ILoreEdit.sendMessage(sender, Language.commandIloreeditUnknown);
+                sendMessage(sender, Language.commandIloreeditUnknown);
         }
         return true;
     }
@@ -41,6 +41,10 @@ public class ILoreEditCommand implements TabExecutor {
     @SuppressWarnings("NullableProblems")
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         return TabComplete.getCompleteList(args, TabComplete.getTabList(args, command.getName()));
+    }
+
+    private static void sendMessage(CommandSender sender, String msg) {
+        sender.sendMessage(Language.messagePrefix + msg);
     }
 
 }
