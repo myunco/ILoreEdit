@@ -26,8 +26,10 @@ public class ILoreEdit extends JavaPlugin {
     public void onEnable() {
         plugin = this;
         mcVersion = Integer.parseInt(getServer().getBukkitVersion().replace('-', '.').split("\\.")[1]);
-        if (!getServer().getPluginManager().isPluginEnabled("ProtocolLib") && mcVersion < 16) {
-            getLogger().info("未找到ProtocolLib插件, 将不支持直接连续空格。");
+        if (!getServer().getPluginManager().isPluginEnabled("ProtocolLib")) {
+            if (mcVersion < 16) { //新版本就不提示了 因为新版服务端已经不能通过ProtocolLib获取连续空格了
+                getLogger().info("未找到ProtocolLib插件, 将不支持直接连续空格。");
+            }
         } else {
             manager = ProtocolLibrary.getProtocolManager();
         }
