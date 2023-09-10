@@ -1,12 +1,12 @@
-package xyz.myunco.iloreedit.command;
+package cn.suml.iloreedit.command;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import org.bukkit.entity.Player;
-import xyz.myunco.iloreedit.ILoreEdit;
-import xyz.myunco.iloreedit.util.Utils;
+import cn.suml.iloreedit.ILoreEdit;
+import cn.suml.iloreedit.util.Utils;
 
 import java.util.List;
 

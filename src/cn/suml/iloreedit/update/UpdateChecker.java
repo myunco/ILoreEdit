@@ -1,7 +1,7 @@
-package xyz.myunco.iloreedit.update;
+package cn.suml.iloreedit.update;
 
-import xyz.myunco.iloreedit.ILoreEdit;
-import xyz.myunco.iloreedit.config.Language;
+import cn.suml.iloreedit.ILoreEdit;
+import cn.suml.iloreedit.config.Language;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -1,7 +1,7 @@
-package xyz.myunco.iloreedit.config;
+package cn.suml.iloreedit.config;
 
 import org.bukkit.configuration.file.YamlConfiguration;
-import xyz.myunco.iloreedit.ILoreEdit;
+import cn.suml.iloreedit.ILoreEdit;
 
 import java.io.File;
 import java.io.FileOutputStream;

@@ -1,4 +1,4 @@
-package xyz.myunco.iloreedit.update;
+package cn.suml.iloreedit.update;
 
 public class CheckResult {
 

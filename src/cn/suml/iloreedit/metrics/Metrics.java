@@ -1,4 +1,4 @@
-package xyz.myunco.iloreedit.metrics;
+package cn.suml.iloreedit.metrics;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;

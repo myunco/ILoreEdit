@@ -1,17 +1,17 @@
-package xyz.myunco.iloreedit;
+package cn.suml.iloreedit;
 
+import cn.suml.iloreedit.command.ChatPacketListener;
+import cn.suml.iloreedit.command.ILoreEditCommand;
+import cn.suml.iloreedit.config.Config;
+import cn.suml.iloreedit.config.Language;
+import cn.suml.iloreedit.update.UpdateChecker;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.java.JavaPlugin;
-import xyz.myunco.iloreedit.command.ChatPacketListener;
-import xyz.myunco.iloreedit.command.EditLoreCommand;
-import xyz.myunco.iloreedit.command.ILoreEditCommand;
-import xyz.myunco.iloreedit.config.Config;
-import xyz.myunco.iloreedit.config.Language;
-import xyz.myunco.iloreedit.metrics.Metrics;
-import xyz.myunco.iloreedit.update.UpdateChecker;
+import cn.suml.iloreedit.command.EditLoreCommand;
+import cn.suml.iloreedit.metrics.Metrics;
 
 import java.io.File;
 import java.util.ArrayList;

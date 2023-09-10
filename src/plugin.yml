@@ -1,11 +1,13 @@
 name: ILoreEdit
-main: xyz.myunco.iloreedit.ILoreEdit
-version: 2.5.1
+main: cn.suml.iloreedit.ILoreEdit
+version: 2.6.0-SNAPSHOT
 api-version: 1.13
-author: unco_
+author: myunco
 website: https://www.mcbbs.net/thread-1160634-1-1.html
+description: 一款可以编辑物品名称和Lore的插件。
 softdepend:
   - ProtocolLib
+  - PlaceholderAPI
 commands:
   ILoreEdit:
     aliases: [ile, le]

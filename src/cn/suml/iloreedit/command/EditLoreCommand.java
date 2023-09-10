@@ -1,5 +1,9 @@
-package xyz.myunco.iloreedit.command;
+package cn.suml.iloreedit.command;
 
+import cn.suml.iloreedit.ILoreEdit;
+import cn.suml.iloreedit.config.Language;
+import cn.suml.iloreedit.config.TemplateInfo;
+import cn.suml.iloreedit.util.Utils;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -8,10 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import xyz.myunco.iloreedit.ILoreEdit;
-import xyz.myunco.iloreedit.config.Language;
-import xyz.myunco.iloreedit.config.TemplateInfo;
-import xyz.myunco.iloreedit.util.Utils;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -68,7 +68,7 @@ public class EditLoreCommand implements TabExecutor {
         return TabComplete.getCompleteList(args, TabComplete.getTabList(args, command.getName()));
     }
 
-    @SuppressWarnings({"deprecation"})
+    @SuppressWarnings("deprecation")
     private void commandEditLore(CommandSender sender, Player player, String arg, String[] args) {
         if (args.length == 0 || args[0].isEmpty()) {
             sendMessage(sender, Language.commandEditloreUsage);
@@ -111,7 +111,7 @@ public class EditLoreCommand implements TabExecutor {
                     sendMessage(sender, Language.commandEditloreArgsError);
                     sendMessage(sender, Language.commandEditloreSetUsage);
                     return;
-                } else if (lore.size() == 0) {
+                } else if (lore.isEmpty()) {
                     sendMessage(sender, Language.commandEditloreSetNotLore);
                     return;
                 }
@@ -132,7 +132,7 @@ public class EditLoreCommand implements TabExecutor {
                     sendMessage(sender, Language.commandEditloreInsUsage);
                     return;
                 }
-                if (lore.size() == 0) {
+                if (lore.isEmpty()) {
                     sendMessage(sender, Language.commandEditloreInsNotLore);
                     return;
                 }
@@ -154,7 +154,7 @@ public class EditLoreCommand implements TabExecutor {
                     sendMessage(sender, Language.commandEditloreDelUsage);
                     return;
                 }
-                if (lore.size() == 0) {
+                if (lore.isEmpty()) {
                     sendMessage(sender, Language.commandEditloreDelNotLore);
                     return;
                 }

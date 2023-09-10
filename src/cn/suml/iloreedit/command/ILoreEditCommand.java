@@ -1,11 +1,11 @@
-package xyz.myunco.iloreedit.command;
+package cn.suml.iloreedit.command;
 
+import cn.suml.iloreedit.update.UpdateChecker;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
-import xyz.myunco.iloreedit.ILoreEdit;
-import xyz.myunco.iloreedit.config.Language;
-import xyz.myunco.iloreedit.update.UpdateChecker;
+import cn.suml.iloreedit.ILoreEdit;
+import cn.suml.iloreedit.config.Language;
 
 import java.util.List;
 

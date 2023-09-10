@@ -1,10 +1,10 @@
-package xyz.myunco.iloreedit.util;
+package cn.suml.iloreedit.util;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.meta.ItemMeta;
-import xyz.myunco.iloreedit.ILoreEdit;
-import xyz.myunco.iloreedit.config.Language;
+import cn.suml.iloreedit.ILoreEdit;
+import cn.suml.iloreedit.config.Language;
 
 import java.util.ArrayList;
 import java.util.List;

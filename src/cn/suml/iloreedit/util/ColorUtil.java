@@ -1,4 +1,4 @@
-package xyz.myunco.iloreedit.util;
+package cn.suml.iloreedit.util;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
