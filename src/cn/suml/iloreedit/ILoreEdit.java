@@ -9,6 +9,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import cn.suml.iloreedit.command.EditLoreCommand;
 import cn.suml.iloreedit.metrics.Metrics;
@@ -21,6 +22,7 @@ public class ILoreEdit extends JavaPlugin {
     public ProtocolManager manager;
     public static ILoreEdit plugin;
     public static int mcVersion;
+    public boolean enablePAPI;
 
     @Override
     public void onEnable() {
@@ -43,6 +45,13 @@ public class ILoreEdit extends JavaPlugin {
         Config.loadConfig();
         if (Config.checkUpdate) {
             UpdateChecker.start();
+        }
+        if (!enablePAPI) {
+            Plugin papi = getServer().getPluginManager().getPlugin("PlaceholderAPI");
+            enablePAPI = papi != null && papi.isEnabled();
+            if (enablePAPI) {
+                logMessage("Found PlaceholderAPI: §3v" + papi.getDescription().getVersion());
+            }
         }
         if (!new File(plugin.getDataFolder(), "templates.yml").exists()) {
             plugin.saveResource("templates.yml", false);

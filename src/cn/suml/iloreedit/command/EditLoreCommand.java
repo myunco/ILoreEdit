@@ -4,6 +4,7 @@ import cn.suml.iloreedit.ILoreEdit;
 import cn.suml.iloreedit.config.Language;
 import cn.suml.iloreedit.config.TemplateInfo;
 import cn.suml.iloreedit.util.Utils;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -224,8 +225,10 @@ public class EditLoreCommand implements TabExecutor {
                 }
                 TemplateInfo template = new TemplateInfo(plugin); //模板需要实时更新 所以每次都重新加载
                 if (template.exists(args[1])) {
-                    meta.setDisplayName(template.getDisplayName(args[1]));
-                    meta.setLore(template.getLore(args[1]));
+                    meta.setDisplayName(replacePlaceholders(player, template.getDisplayName(args[1])));
+                    List<String> lore = template.getLore(args[1]);
+                    lore.replaceAll(text -> replacePlaceholders(player, text));
+                    meta.setLore(lore);
                     if (ILoreEdit.mcVersion >= 14 && template.hasCustomModelData(args[1])) {
                         meta.setCustomModelData(template.getCustomModelData(args[1]));
                     }
@@ -311,6 +314,30 @@ public class EditLoreCommand implements TabExecutor {
 
     private static void sendMessage(CommandSender sender, String msg) {
         sender.sendMessage(Language.messagePrefix + msg);
+    }
+
+    public String replacePlaceholders(Player player, String text) {
+        if (text == null) {
+            return null;
+        }
+        if (plugin.enablePAPI && mayContainPlaceholders(text)) {
+            return PlaceholderAPI.setPlaceholders(player, text.indexOf('{') == -1 ? text : text.replace("{player}", player.getName()));
+        }
+        return text.indexOf('{') == -1 ? text : text.replace("{player}", player.getName());
+    }
+
+    public static boolean mayContainPlaceholders(String text) {
+        char[] value = text.toCharArray();
+        int count = 0;
+        for (char c : value) {
+            if (c == '%') {
+                count++;
+                if (count == 2) {
+                    return text.indexOf('_') != -1;
+                }
+            }
+        }
+        return false;
     }
 
 }
