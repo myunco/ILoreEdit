@@ -3,8 +3,10 @@ package cn.suml.iloreedit.command;
 import cn.suml.iloreedit.ILoreEdit;
 import cn.suml.iloreedit.config.Language;
 import cn.suml.iloreedit.config.TemplateInfo;
+import cn.suml.iloreedit.util.UndoList;
 import cn.suml.iloreedit.util.Utils;
 import me.clip.placeholderapi.PlaceholderAPI;
+import net.minecraft.server.v1_14_R1.Items;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -20,6 +22,7 @@ import java.util.List;
 
 public class EditLoreCommand implements TabExecutor {
     public static final HashMap<String, String> cmdMap = new HashMap<>();
+    private final HashMap<String, UndoList<ItemMeta>> undoMap = new HashMap<>();
     private final ILoreEdit plugin = ILoreEdit.plugin;
     private List<String> templateList;
     private long templateListTime;
@@ -303,16 +306,55 @@ public class EditLoreCommand implements TabExecutor {
                 }
                 break;
             }
+            case "undo":
+                commandUndo(player, item);
+                return;
+            case "redo":
+                commandRedo(player, item);
+                return;
             default:
                 sendMessage(sender, Language.commandEditloreUnknown);
                 return;
         }
+        System.out.println(meta);
         if (!item.setItemMeta(meta)) {
             sendMessage(sender, Language.commandEditloreSaveError);
         }
+        if (undoMap.get(player.getName()) == null) {
+            undoMap.put(player.getName(), new UndoList<>());
+        }
+        undoMap.get(player.getName()).push(meta.clone());
     }
 
-    private static void sendMessage(CommandSender sender, String msg) {
+    public void commandUndo(Player player, ItemStack item) {
+        UndoList<ItemMeta> undoList = undoMap.get(player.getName());
+        if (undoList == null || !undoList.canUndo()) {
+            sendMessage(player, "§c没有可撤销的操作!");
+            return;
+        }
+        ItemMeta meta = undoList.undo();
+        System.out.println(meta);
+        if (!item.setItemMeta(meta)) {
+            sendMessage(player, Language.commandEditloreSaveError);
+        } else {
+            sendMessage(player, "§a撤销了一次操作");
+        }
+    }
+
+    public void commandRedo(Player player, ItemStack item) {
+        UndoList<ItemMeta> undoList = undoMap.get(player.getName());
+        if (undoList == null || !undoList.canRedo()) {
+            sendMessage(player, "§c没有可重做的操作!");
+            return;
+        }
+        if (!item.setItemMeta(undoList.redo())) {
+            sendMessage(player, Language.commandEditloreSaveError);
+        } else {
+            sendMessage(player, "§a重做了一次操作");
+        }
+    }
+
+    public void sendMessage(CommandSender sender, String msg) {
         sender.sendMessage(Language.messagePrefix + msg);
     }
 

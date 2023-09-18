@@ -11,10 +11,12 @@ public class TabComplete {
 
     static {
         tabListMap.put("ILoreEdit", Arrays.asList("help", "reload", "version"));
-        tabListMap.put("EditLore", Arrays.asList("name", "add", "set", "ins", "del", "clear", "import", "export", "owner", "model"));
+        tabListMap.put("EditLore", Arrays.asList("name", "add", "set", "ins", "del", "clear", "import", "export", "owner", "model", "undo", "redo"));
         tabListMap.put("EditLore.clear", Arrays.asList("name", "lore", "model"));
         tabListMap.put("EditLore.owner", Collections.emptyList());
         tabListMap.put("EditLore.export", Collections.emptyList());
+        tabListMap.put("EditLore.undo", Collections.emptyList());
+        tabListMap.put("EditLore.redo", Collections.emptyList());
     }
 
     public static List<String> getTabList(String[] args, String command) {
