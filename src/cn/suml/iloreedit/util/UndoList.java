@@ -51,8 +51,4 @@ public class UndoList<T> {
         return !redo.isEmpty();
     }
 
-    public T getCurrent() {
-        return current;
-    }
-
 }

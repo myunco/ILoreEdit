@@ -65,6 +65,8 @@ public class Language {
     public static String commandEditloreExportUsage;
     public static String commandEditloreExportNone;
     public static String commandEditloreExport;
+    public static String commandEditloreRemoveUsage;
+    public static String commandEditloreRemove;
     public static String commandEditloreOwnerUsage;
     public static String commandEditloreOwnerNotSkull;
     public static String commandEditloreOwner;
@@ -75,6 +77,10 @@ public class Language {
     public static String commandEditloreSaveError;
     public static String commandEditloreConsoleUsage;
     public static String commandEditloreConsoleNotFoundPlayer;
+    public static String commandEditloreUndoCannot;
+    public static String commandEditloreUndo;
+    public static String commandEditloreRedoCannot;
+    public static String commandEditloreRedo;
 
     public static void loadLanguage(String language) {
         if (language == null || !language.matches("[a-zA-Z]{2}[_-][a-zA-Z]{2}")) {
@@ -165,6 +171,8 @@ public class Language {
         commandEditloreExportUsage = config.getString("command-editlore-export-usage", "§6用法: §a/lore export <模板名> §7---- §b导出到指定的模板");
         commandEditloreExportNone = config.getString("command-editlore-export-none", "§e你手中的物品没什么可导出的.");
         commandEditloreExport = config.getString("command-editlore-export", "§a已导出至模板.");
+        commandEditloreRemoveUsage = config.getString("command-editlore-remove-usage", "§6用法: §a/lore remove <模板名> §7---- §b删除指定的模板");
+        commandEditloreRemove = config.getString("command-editlore-remove", "§a已删除指定的模板.");
         commandEditloreOwnerUsage = config.getString("command-editlore-owner-usage", "§6用法: §a/lore owner <玩家名> §7---- §b修改头颅主人");
         commandEditloreOwnerNotSkull = config.getString("command-editlore-owner-not-skull", "§d你确定你手里拿的是头颅???");
         commandEditloreOwner = config.getString("command-editlore-owner", "§a已修改头颅主人.");
@@ -175,6 +183,10 @@ public class Language {
         commandEditloreSaveError = config.getString("command-editlore-save-error", "§c保存修改失败, 请重试!");
         commandEditloreConsoleUsage = config.getString("command-editlore-console-usage", "§a控制台使用此命令需要在子命令前面指定玩家名称! §6示例格式: /lore <玩家名> name <名字>");
         commandEditloreConsoleNotFoundPlayer = config.getString("command-editlore-console-not-found-player", "§c指定的玩家不在线或不存在!");
+        commandEditloreUndoCannot = config.getString("command-editlore-undo-cannot", "§c没有可撤销的操作!");
+        commandEditloreUndo = config.getString("command-editlore-undo", "§a撤销了一次操作");
+        commandEditloreRedoCannot = config.getString("command-editlore-redo-cannot", "§c没有可重做的操作!");
+        commandEditloreRedo = config.getString("command-editlore-redo", "§a重做了一次操作");
     }
 
     private static void saveDefaultLanguage(File lang, String langPath) {
@@ -205,16 +217,23 @@ public class Language {
     }
 
     private static void languageUpdate(YamlConfiguration config, File lang) {
-        int latestVersion = 1;
+        int latestVersion = 2;
         if (version < latestVersion) {
             plugin.logMessage(replaceArgs(languageVersionOutdated, version, latestVersion));
-            //目前最新版本是1 所以暂时不写升级代码
-            if (version < 1) {
-                plugin.logMessage(languageVersionError + version);
-                return;
+            switch (version) {
+                case 1:
+                    config.set("command-editlore-remove-usage", "§6用法: §a/lore remove <模板名> §7---- §b删除指定的模板");
+                    config.set("command-editlore-remove", "§a已删除指定的模板.");
+                    config.set("command-editlore-undo-cannot", "§c没有可撤销的操作!");
+                    config.set("command-editlore-undo", "§a撤销了一次操作");
+                    config.set("command-editlore-redo-cannot", "§c没有可重做的操作!");
+                    config.set("command-editlore-redo", "§a重做了一次操作");
+                    break; //最后一个case再break，以便跨版本升级。
+                default:
+                    plugin.getLogger().warning(languageVersionError + version);
+                    return;
             }
             plugin.logMessage(languageUpdateComplete);
-            version = latestVersion;
             config.set("version", latestVersion);
             Config.saveConfiguration(config, lang);
         }

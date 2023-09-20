@@ -1,5 +1,5 @@
 #语言文件版本号 请勿修改
-version: 1
+version: 2
 
 log-prefix: '§8[§3ILoreEdit§8] '
 message-prefix: '§8[§3ILoreEdit§8] §c-> '
@@ -70,6 +70,8 @@ command-editlore-import: '§a已导入模板.'
 command-editlore-export-usage: '§6用法: §a/lore export <模板名> §7---- §b导出到指定的模板'
 command-editlore-export-none: '§e你手中的物品没什么可导出的.'
 command-editlore-export: '§a已导出至模板.'
+command-editlore-remove-usage: '§6用法: §a/lore remove <模板名> §7---- §b删除指定的模板'
+command-editlore-remove: '§a已删除指定的模板.'
 command-editlore-owner-usage: '§6用法: §a/lore owner <玩家名> §7---- §b修改头颅主人'
 command-editlore-owner-not-skull: '§d你确定你手里拿的是头颅???'
 command-editlore-owner: '§a已修改头颅主人.'
@@ -80,3 +82,7 @@ command-editlore-model: '§a已设置自定义模型数据.'
 command-editlore-save-error: '§c保存修改失败, 请重试!'
 command-editlore-console-usage: '§a控制台使用此命令需要在子命令前面指定玩家名称! §6示例格式: /lore <玩家名> name <名字>'
 command-editlore-console-not-found-player: '§c指定的玩家不在线或不存在!'
+command-editlore-undo-cannot: '§c没有可撤销的操作!'
+command-editlore-undo: '§a撤销了一次操作'
+command-editlore-redo-cannot: '§c没有可重做的操作!'
+command-editlore-redo: '§a重做了一次操作'

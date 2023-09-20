@@ -6,7 +6,6 @@ import cn.suml.iloreedit.config.TemplateInfo;
 import cn.suml.iloreedit.util.UndoList;
 import cn.suml.iloreedit.util.Utils;
 import me.clip.placeholderapi.PlaceholderAPI;
-import net.minecraft.server.v1_14_R1.Items;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -62,7 +61,7 @@ public class EditLoreCommand implements TabExecutor {
             }
             args = Arrays.copyOfRange(args, 1, args.length);
         }
-        if (args.length == 2 && args[0].equalsIgnoreCase("import")) {
+        if (args.length == 2 && (args[0].equalsIgnoreCase("import") || args[0].equalsIgnoreCase("remove"))) {
             if (System.currentTimeMillis() - templateListTime > 10000L) { //缓存10秒
                 templateList = new TemplateInfo(plugin).getTemplateList();
                 templateListTime = System.currentTimeMillis();
@@ -271,7 +270,24 @@ public class EditLoreCommand implements TabExecutor {
                 }
                 template.save();
                 sendMessage(sender, Language.commandEditloreExport);
-                break;
+                return;
+            }
+            case "remove": {
+                //ll remove test
+                if (args.length != 2) {
+                    sendMessage(sender, Language.commandEditloreArgsError);
+                    sendMessage(sender, Language.commandEditloreRemoveUsage);
+                    return;
+                }
+                TemplateInfo template = new TemplateInfo(plugin);
+                if (template.exists(args[1])) {
+                    template.delete(args[1]);
+                    template.save();
+                    sendMessage(sender, Language.commandEditloreRemove);
+                } else {
+                    sendMessage(sender, Language.commandEditloreTemplateDontExist);
+                }
+                return;
             }
             case "owner":
                 //ll owner test
@@ -329,7 +345,7 @@ public class EditLoreCommand implements TabExecutor {
     public void commandUndo(Player player, ItemStack item) {
         UndoList<ItemMeta> undoList = undoMap.get(player.getName());
         if (undoList == null || !undoList.canUndo()) {
-            sendMessage(player, "§c没有可撤销的操作!");
+            sendMessage(player, Language.commandEditloreUndoCannot);
             return;
         }
         ItemMeta meta = undoList.undo();
@@ -337,20 +353,20 @@ public class EditLoreCommand implements TabExecutor {
         if (!item.setItemMeta(meta)) {
             sendMessage(player, Language.commandEditloreSaveError);
         } else {
-            sendMessage(player, "§a撤销了一次操作");
+            sendMessage(player, Language.commandEditloreUndo);
         }
     }
 
     public void commandRedo(Player player, ItemStack item) {
         UndoList<ItemMeta> undoList = undoMap.get(player.getName());
         if (undoList == null || !undoList.canRedo()) {
-            sendMessage(player, "§c没有可重做的操作!");
+            sendMessage(player, Language.commandEditloreRedoCannot);
             return;
         }
         if (!item.setItemMeta(undoList.redo())) {
             sendMessage(player, Language.commandEditloreSaveError);
         } else {
-            sendMessage(player, "§a重做了一次操作");
+            sendMessage(player, Language.commandEditloreRedo);
         }
     }
 
