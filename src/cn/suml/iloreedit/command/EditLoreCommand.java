@@ -227,9 +227,9 @@ public class EditLoreCommand implements TabExecutor {
                 }
                 TemplateInfo template = new TemplateInfo(plugin); //模板需要实时更新 所以每次都重新加载
                 if (template.exists(args[1])) {
-                    meta.setDisplayName(replacePlaceholders(player, template.getDisplayName(args[1])));
+                    meta.setDisplayName(Utils.translateColor(replacePlaceholders(player, template.getDisplayName(args[1]))));
                     List<String> lore = template.getLore(args[1]);
-                    lore.replaceAll(text -> replacePlaceholders(player, text));
+                    lore.replaceAll(text -> Utils.translateColor(replacePlaceholders(player, text)));
                     meta.setLore(lore);
                     if (ILoreEdit.mcVersion >= 14 && template.hasCustomModelData(args[1])) {
                         meta.setCustomModelData(template.getCustomModelData(args[1]));
@@ -332,7 +332,6 @@ public class EditLoreCommand implements TabExecutor {
                 sendMessage(sender, Language.commandEditloreUnknown);
                 return;
         }
-        System.out.println(meta);
         if (!item.setItemMeta(meta)) {
             sendMessage(sender, Language.commandEditloreSaveError);
         }
@@ -349,7 +348,6 @@ public class EditLoreCommand implements TabExecutor {
             return;
         }
         ItemMeta meta = undoList.undo();
-        System.out.println(meta);
         if (!item.setItemMeta(meta)) {
             sendMessage(player, Language.commandEditloreSaveError);
         } else {

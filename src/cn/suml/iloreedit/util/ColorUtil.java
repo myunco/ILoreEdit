@@ -92,14 +92,11 @@ public class ColorUtil {
             this.b = b;
         }
 
-        @SuppressWarnings("StringBufferReplaceableByString")
         @Override
         public String toString() {
-            StringBuilder builder = new StringBuilder();
-            builder.append(HEX.charAt(r / 16)).append(HEX.charAt(r % 16));
-            builder.append(HEX.charAt(g / 16)).append(HEX.charAt(g % 16));
-            builder.append(HEX.charAt(b / 16)).append(HEX.charAt(b % 16));
-            return builder.toString();
+            return String.valueOf(HEX.charAt(r / 16)) + HEX.charAt(r % 16) +
+                    HEX.charAt(g / 16) + HEX.charAt(g % 16) +
+                    HEX.charAt(b / 16) + HEX.charAt(b % 16);
         }
     }
 
