@@ -5,7 +5,6 @@ import cn.suml.iloreedit.config.Language;
 import cn.suml.iloreedit.config.TemplateInfo;
 import cn.suml.iloreedit.util.UndoList;
 import cn.suml.iloreedit.util.Utils;
-import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -91,7 +90,7 @@ public class EditLoreCommand implements TabExecutor {
                     sendMessage(sender, Language.commandEditloreNameUsage);
                     return;
                 }
-                meta.setDisplayName(Utils.translateColor(Utils.getTextRight(arg, args[0] + " ")));
+                meta.setDisplayName(Utils.translateColor(player, Utils.getTextRight(arg, args[0] + " ")));
                 sendMessage(sender, Language.commandEditloreName);
                 break;
             case "add": {
@@ -102,7 +101,7 @@ public class EditLoreCommand implements TabExecutor {
                     sendMessage(sender, Language.commandEditloreAddUsage);
                     return;
                 }
-                lore.add(Utils.translateColor(Utils.getTextRight(arg, args[0] + " ")));
+                lore.add(Utils.translateColor(player, Utils.getTextRight(arg, args[0] + " ")));
                 meta.setLore(lore);
                 sendMessage(sender, Language.commandEditloreAdd);
                 break;
@@ -122,7 +121,7 @@ public class EditLoreCommand implements TabExecutor {
                 if (line == 0) {
                     return;
                 }
-                lore.set(line - 1, Utils.translateColor(Utils.getTextRight(arg, args[1] + " ")));
+                lore.set(line - 1, Utils.translateColor(player, Utils.getTextRight(arg, args[1] + " ")));
                 meta.setLore(lore);
                 sendMessage(sender, Language.commandEditloreSet);
                 break;
@@ -143,7 +142,7 @@ public class EditLoreCommand implements TabExecutor {
                 if (line == 0) {
                     return;
                 }
-                lore.add(line - 1, Utils.translateColor(Utils.getTextRight(arg, args[1] + " ")));
+                lore.add(line - 1, Utils.translateColor(player, Utils.getTextRight(arg, args[1] + " ")));
                 meta.setLore(lore);
                 sendMessage(sender, Language.commandEditloreIns);
                 break;
@@ -227,9 +226,9 @@ public class EditLoreCommand implements TabExecutor {
                 }
                 TemplateInfo template = new TemplateInfo(plugin); //模板需要实时更新 所以每次都重新加载
                 if (template.exists(args[1])) {
-                    meta.setDisplayName(Utils.translateColor(replacePlaceholders(player, template.getDisplayName(args[1]))));
+                    meta.setDisplayName(Utils.translateColor(player, template.getDisplayName(args[1])));
                     List<String> lore = template.getLore(args[1]);
-                    lore.replaceAll(text -> Utils.translateColor(replacePlaceholders(player, text)));
+                    lore.replaceAll(text -> Utils.translateColor(player, text));
                     meta.setLore(lore);
                     if (ILoreEdit.mcVersion >= 14 && template.hasCustomModelData(args[1])) {
                         meta.setCustomModelData(template.getCustomModelData(args[1]));
@@ -370,30 +369,6 @@ public class EditLoreCommand implements TabExecutor {
 
     public void sendMessage(CommandSender sender, String msg) {
         sender.sendMessage(Language.messagePrefix + msg);
-    }
-
-    public String replacePlaceholders(Player player, String text) {
-        if (text == null) {
-            return null;
-        }
-        if (plugin.enablePAPI && mayContainPlaceholders(text)) {
-            return PlaceholderAPI.setPlaceholders(player, text.indexOf('{') == -1 ? text : text.replace("{player}", player.getName()));
-        }
-        return text.indexOf('{') == -1 ? text : text.replace("{player}", player.getName());
-    }
-
-    public static boolean mayContainPlaceholders(String text) {
-        char[] value = text.toCharArray();
-        int count = 0;
-        for (char c : value) {
-            if (c == '%') {
-                count++;
-                if (count == 2) {
-                    return text.indexOf('_') != -1;
-                }
-            }
-        }
-        return false;
     }
 
 }
