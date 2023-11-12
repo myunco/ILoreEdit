@@ -226,10 +226,14 @@ public class EditLoreCommand implements TabExecutor {
                 }
                 TemplateInfo template = new TemplateInfo(plugin); //模板需要实时更新 所以每次都重新加载
                 if (template.exists(args[1])) {
-                    meta.setDisplayName(Utils.translateColor(player, template.getDisplayName(args[1])));
+                    if (template.getDisplayName(args[1]) != null) {
+                        meta.setDisplayName(Utils.translateColor(player, template.getDisplayName(args[1])));
+                    }
                     List<String> lore = template.getLore(args[1]);
-                    lore.replaceAll(text -> Utils.translateColor(player, text));
-                    meta.setLore(lore);
+                    if (!lore.isEmpty()) {
+                        lore.replaceAll(text -> Utils.translateColor(player, text));
+                        meta.setLore(lore);
+                    }
                     if (ILoreEdit.mcVersion >= 14 && template.hasCustomModelData(args[1])) {
                         meta.setCustomModelData(template.getCustomModelData(args[1]));
                     }

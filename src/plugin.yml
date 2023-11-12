@@ -1,6 +1,6 @@
 name: ILoreEdit
 main: cn.suml.iloreedit.ILoreEdit
-version: 2.6.0
+version: 2.6.1-SNAPSHOT
 api-version: 1.13
 author: myunco
 website: https://www.mcbbs.net/thread-1160634-1-1.html
