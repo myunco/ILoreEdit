@@ -8,12 +8,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class UpdateChecker {
     public static ILoreEdit plugin = ILoreEdit.plugin;
     public static Timer timer;
+    private static String downloadLink;
 
     public static void start() {
         plugin.getServer().getScheduler().runTask(plugin, () -> {
@@ -27,7 +29,8 @@ public class UpdateChecker {
                             if (result.hasNewVersion()) {
                                 String str = Language.replaceArgs(Language.updateFoundNewVersion, CheckResult.currentVersion, result.getLatestVersion());
                                 plugin.logMessage(result.hasMajorUpdate() ? Language.updateMajorUpdate + str : str);
-                                plugin.logMessage(Language.updateDownloadLink + "https://www.mcbbs.net/thread-1160634-1-1.html");
+                                // plugin.logMessage(Language.updateDownloadLink + "https://www.mcbbs.net/thread-1160634-1-1.html");
+                                plugin.logMessage(Language.updateDownloadLink + downloadLink);
                             }
                         } else {
                             plugin.logMessage(Language.updateCheckFailure + result.getResponseCode());
@@ -51,8 +54,9 @@ public class UpdateChecker {
         HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
         int code = conn.getResponseCode();
         if (code == HttpURLConnection.HTTP_OK) {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
             String latestVersion = reader.readLine();
+            downloadLink = reader.readLine();
             reader.close();
             conn.disconnect();
             return new CheckResult(latestVersion, code, CheckResult.ResultType.SUCCESS);
