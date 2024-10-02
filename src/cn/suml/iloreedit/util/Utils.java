@@ -10,6 +10,8 @@ import cn.suml.iloreedit.config.Language;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static cn.suml.iloreedit.ILoreEdit.plugin;
 
@@ -94,6 +96,25 @@ public class Utils {
 
     public static String replaceSpace(String text) {
         return text.indexOf('"') == -1 ? text : text.replace("\"\"", " ");
+    }
+
+    /**
+     * 将一个字符串解析为int类型
+     * @param str 数字字符串
+     * @return 返回str表示的int. 无效数字格式返回-1.
+     */
+    public static int parseInt(String str) {
+        try {
+            return Integer.parseInt(str);
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+    }
+
+    public static List<String> generateLineNumber(int size) {
+        return IntStream.rangeClosed(1, size)
+                .mapToObj(Integer::toString)
+                .collect(Collectors.toList());
     }
 
 }

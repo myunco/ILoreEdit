@@ -1,6 +1,6 @@
 name: ILoreEdit
 main: cn.suml.iloreedit.ILoreEdit
-version: 2.6.1
+version: 2.6.2-SNAPSHOT
 api-version: 1.13
 author: myunco
 website: https://github.com/myunco/ILoreEdit

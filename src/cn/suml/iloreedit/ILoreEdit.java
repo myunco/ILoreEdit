@@ -5,6 +5,7 @@ import cn.suml.iloreedit.command.ILoreEditCommand;
 import cn.suml.iloreedit.config.Config;
 import cn.suml.iloreedit.config.Language;
 import cn.suml.iloreedit.update.UpdateChecker;
+import cn.suml.iloreedit.update.UpdateNotification;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import org.bukkit.command.PluginCommand;
@@ -37,6 +38,9 @@ public class ILoreEdit extends JavaPlugin {
         }
         initConfig();
         initCommand();
+        if (Config.checkUpdate) {
+            getServer().getPluginManager().registerEvents(new UpdateNotification(), this);
+        }
         new Metrics(this, 12935);
         logMessage(Language.enableMessage);
     }

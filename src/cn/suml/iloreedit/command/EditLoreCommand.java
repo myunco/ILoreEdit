@@ -15,6 +15,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -52,7 +53,7 @@ public class EditLoreCommand implements TabExecutor {
     }
 
     @Override
-    @SuppressWarnings("NullableProblems")
+    @SuppressWarnings({"NullableProblems", "deprecation"})
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
             if (args.length == 1) {
@@ -66,6 +67,20 @@ public class EditLoreCommand implements TabExecutor {
                 templateListTime = System.currentTimeMillis();
             }
             return TabComplete.getCompleteList(args, templateList, true);
+        } else if (args.length >= 2 && sender instanceof Player && args[0].equalsIgnoreCase("set")) {
+            ItemMeta meta = ((Player) sender).getInventory().getItemInHand().getItemMeta();
+            if (meta != null && meta.hasLore()) {
+                List<String> lore = meta.getLore();
+                assert lore != null;
+                if (args.length == 2) {
+                    return TabComplete.getCompleteList(args, Utils.generateLineNumber(lore.size()));
+                } else if (args.length == 3) {
+                    int line = Utils.parseInt(args[1]) - 1;
+                    if (line >= 0 && line < lore.size()) {
+                        return TabComplete.getCompleteList(args, Collections.singletonList(lore.get(line).replace('§', '&')), true);
+                    }
+                }
+            }
         }
         return TabComplete.getCompleteList(args, TabComplete.getTabList(args, command.getName()));
     }
