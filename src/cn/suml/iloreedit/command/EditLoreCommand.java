@@ -81,6 +81,12 @@ public class EditLoreCommand implements TabExecutor {
                     }
                 }
             }
+        } else if (args.length == 2 && sender instanceof Player && args[0].equalsIgnoreCase("name")) {
+            ItemMeta meta = ((Player) sender).getInventory().getItemInHand().getItemMeta();
+            if (meta != null && meta.hasDisplayName()) {
+                return TabComplete.getCompleteList(args, Collections.singletonList(meta.getDisplayName().replace('§', '&')), true);
+            }
+
         }
         return TabComplete.getCompleteList(args, TabComplete.getTabList(args, command.getName()));
     }
