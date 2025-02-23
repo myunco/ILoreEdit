@@ -5,7 +5,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
-import cn.suml.iloreedit.ILoreEdit;
 import cn.suml.iloreedit.config.Language;
 
 import java.util.ArrayList;
@@ -40,7 +39,7 @@ public class Utils {
     public static String translateColor(Player player, String str) {
         str = replacePlaceholders(player, str);
         if (str.contains("&")) {
-            if (ILoreEdit.mcVersion > 15) {
+            if (plugin.mcVersion.isGreaterThan(15)) {
                 return ChatColor.translateAlternateColorCodes('&', ColorUtil.processHexColor(ColorUtil.processGradientColor(str)));
             }
             return ChatColor.translateAlternateColorCodes('&', str);

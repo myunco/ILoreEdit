@@ -97,7 +97,7 @@ public class EditLoreCommand implements TabExecutor {
             sendMessage(sender, Language.commandEditloreUsage);
             return;
         }
-        ItemStack item = ILoreEdit.mcVersion > 8 ? player.getInventory().getItemInMainHand() : player.getItemInHand();
+        ItemStack item = plugin.mcVersion.isGreaterThan(8) ? player.getInventory().getItemInMainHand() : player.getItemInHand();
         ItemMeta meta = item.getItemMeta();
         if (item.getType() == Material.AIR || meta == null) {
             sendMessage(sender, Language.commandEditloreNotItem);
@@ -221,7 +221,7 @@ public class EditLoreCommand implements TabExecutor {
                         sendMessage(sender, Language.commandEditloreClearLore);
                         break;
                     case "model":
-                        if (ILoreEdit.mcVersion < 14) {
+                        if (plugin.mcVersion.isLessThan(14)) {
                             sendMessage(sender, Language.commandEditloreModelNotSupport);
                             return;
                         }
@@ -255,7 +255,7 @@ public class EditLoreCommand implements TabExecutor {
                         lore.replaceAll(text -> Utils.translateColor(player, text));
                         meta.setLore(lore);
                     }
-                    if (ILoreEdit.mcVersion >= 14 && template.hasCustomModelData(args[1])) {
+                    if (plugin.mcVersion.isGreaterThanOrEqualTo(14) && template.hasCustomModelData(args[1])) {
                         meta.setCustomModelData(template.getCustomModelData(args[1]));
                     }
                     sendMessage(sender, Language.commandEditloreImport);
@@ -289,7 +289,7 @@ public class EditLoreCommand implements TabExecutor {
                 if (meta.hasLore()) {
                     template.setLore(args[1], meta.getLore());
                 }
-                if (ILoreEdit.mcVersion >= 14 && meta.hasCustomModelData()) {
+                if (plugin.mcVersion.isGreaterThanOrEqualTo(14) && meta.hasCustomModelData()) {
                     template.setCustomModelData(args[1], meta.getCustomModelData());
                 }
                 template.save();
@@ -333,13 +333,13 @@ public class EditLoreCommand implements TabExecutor {
                     sendMessage(sender, Language.commandEditloreArgsError);
                     sendMessage(sender, Language.commandEditloreModelUsage);
                     return;
-                } else if (ILoreEdit.mcVersion < 14) {
+                } else if (plugin.mcVersion.isLessThan(14)) {
                     sendMessage(sender, Language.commandEditloreModelNotSupport);
                     return;
                 }
                 try {
                     int data = Integer.parseInt(args[1]);
-                    meta.setCustomModelData(data);
+                    meta.setCustomModelData(data == 0 ? null : data);
                     sendMessage(sender, Language.commandEditloreModel);
                 } catch (NumberFormatException e) {
                     sendMessage(sender, Language.commandEditloreModelInvalidData);

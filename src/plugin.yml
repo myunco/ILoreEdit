@@ -1,6 +1,6 @@
 name: ILoreEdit
 main: cn.suml.iloreedit.ILoreEdit
-version: 2.6.2-SNAPSHOT
+version: 2.7.0
 api-version: 1.13
 author: myunco
 website: https://github.com/myunco/ILoreEdit
@@ -8,6 +8,8 @@ description: 一款可以编辑物品名称和Lore的插件。
 softdepend:
   - ProtocolLib
   - PlaceholderAPI
+  - FoliaCompatibleAPI
+folia-supported: true
 commands:
   ILoreEdit:
     aliases: [ile, le]

@@ -6,8 +6,11 @@ import cn.suml.iloreedit.config.Config;
 import cn.suml.iloreedit.config.Language;
 import cn.suml.iloreedit.update.UpdateChecker;
 import cn.suml.iloreedit.update.UpdateNotification;
+import cn.suml.iloreedit.util.Version;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import net.myunco.folia.FoliaCompatibleAPI;
+import net.myunco.folia.task.CompatibleScheduler;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.Plugin;
@@ -16,26 +19,33 @@ import cn.suml.iloreedit.command.EditLoreCommand;
 import cn.suml.iloreedit.metrics.Metrics;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ILoreEdit extends JavaPlugin {
     public ProtocolManager manager;
     public static ILoreEdit plugin;
-    public static int mcVersion;
+    public Version mcVersion;
     public boolean enablePAPI;
+    private FoliaCompatibleAPI foliaCompatibleAPI;
+    private CompatibleScheduler scheduler;
 
     @Override
     public void onEnable() {
         plugin = this;
-        mcVersion = Integer.parseInt(getServer().getBukkitVersion().replace('-', '.').split("\\.")[1]);
+        mcVersion = new Version(getServer().getBukkitVersion());
         if (!getServer().getPluginManager().isPluginEnabled("ProtocolLib")) {
-            if (mcVersion < 16) { //新版本就不提示了 因为新版服务端已经不能通过ProtocolLib获取连续空格了
+            if (mcVersion.isLessThan(16)) { //新版本就不提示了 因为新版服务端已经不能通过ProtocolLib获取连续空格了
                 getLogger().info("未找到ProtocolLib插件, 将不支持直接连续空格。");
             }
         } else {
             manager = ProtocolLibrary.getProtocolManager();
         }
+        initFoliaCompatibleAPI();
+        scheduler = foliaCompatibleAPI.getScheduler(this);
         initConfig();
         initCommand();
         if (Config.checkUpdate) {
@@ -80,6 +90,44 @@ public class ILoreEdit extends JavaPlugin {
         }
     }
 
+    public void initFoliaCompatibleAPI() {
+        Plugin api = getServer().getPluginManager().getPlugin("FoliaCompatibleAPI");
+        if (api == null) {
+            getLogger().warning("FoliaCompatibleAPI not found!");
+            File file = new File(getDataFolder().getParentFile(), "FoliaCompatibleAPI-1.1.0.jar");
+            InputStream in = getResource("lib/FoliaCompatibleAPI-1.1.0.jar");
+            try {
+                saveResource(file, in);
+                api = getServer().getPluginManager().loadPlugin(file);
+                if (api == null) {
+                    throw new Exception("FoliaCompatibleAPI load failed!");
+                }
+                getServer().getPluginManager().enablePlugin(api);
+                api.onLoad();
+            } catch (Exception e) {
+                e.printStackTrace();
+                getLogger().severe("未安装 FoliaCompatibleAPI ，本插件无法运行！");
+                return;
+            }
+        }
+        foliaCompatibleAPI = (FoliaCompatibleAPI) api;
+        getServer().getConsoleSender().sendMessage("[ILoreEdit] Found FoliaCompatibleAPI: §3v" + api.getDescription().getVersion());
+    }
+
+    private void saveResource(File target, InputStream source) throws Exception {
+        if (source != null) {
+            //noinspection IOStreamConstructor
+            OutputStream out = new FileOutputStream(target);
+            byte[] buf = new byte[8192];
+            int len;
+            while ((len = source.read(buf)) != -1) {
+                out.write(buf, 0, len);
+            }
+            out.close();
+            source.close();
+        }
+    }
+
     @Override
     public void onDisable() {
         if (manager != null) {
@@ -91,6 +139,10 @@ public class ILoreEdit extends JavaPlugin {
 
     public ClassLoader classLoader() {
         return getClassLoader();
+    }
+
+    public CompatibleScheduler getScheduler() {
+        return scheduler;
     }
 
     public void logMessage(String msg) {

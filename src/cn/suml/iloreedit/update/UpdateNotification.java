@@ -26,7 +26,7 @@ public class UpdateNotification implements Listener {
             }
             if (!notifiedPlayers.contains(event.getPlayer().getUniqueId())) {
                 notifiedPlayers.add(event.getPlayer().getUniqueId());
-                ILoreEdit.plugin.getServer().getScheduler().runTaskLaterAsynchronously(ILoreEdit.plugin, () -> {
+                ILoreEdit.plugin.getScheduler().runTaskLaterAsynchronously(() -> {
                     event.getPlayer().sendMessage(Language.messagePrefix + UpdateChecker.newVersion);
                     event.getPlayer().sendMessage(Language.messagePrefix + UpdateChecker.downloadLink);
                 }, 60);

@@ -31,6 +31,8 @@ command-iloreedit-help:
   - '§a/lore export <模板名> §7---- §b导出到指定的模板'
   - '§a/lore owner <玩家名> §7---- §b修改头颅主人'
   - '§a/lore model <模型数据> §7---- §b设置自定义模型数据'
+  - '§a/lore undo §7---- §b撤销一次物品编辑'
+  - '§a/lore redo §7---- §b重做一次物品编辑'
   - '§e/ILoreEdit help §7---- §a查看指令帮助'
   - '§e/ILoreEdit reload §7---- §a重载插件配置'
   - '§e/ILoreEdit version §7---- §a查看插件版本'
