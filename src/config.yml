@@ -4,5 +4,5 @@ version: 1
 #语言 默认为简体中文
 language: 'zh_cn'
 
-#检查更新 true为启用 false为禁用
+#检查更新 (十二小时检查一次)
 checkUpdate: true

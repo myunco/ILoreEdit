@@ -256,7 +256,10 @@ public class EditLoreCommand implements TabExecutor {
                         meta.setLore(lore);
                     }
                     if (plugin.mcVersion.isGreaterThanOrEqualTo(14) && template.hasCustomModelData(args[1])) {
-                        meta.setCustomModelData(template.getCustomModelData(args[1]));
+                        int data = template.getCustomModelData(args[1]);
+                        if (data != 0) {
+                            meta.setCustomModelData(data);
+                        }
                     }
                     sendMessage(sender, Language.commandEditloreImport);
                 } else {

@@ -10,7 +10,7 @@ import cn.suml.iloreedit.util.Version;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import net.myunco.folia.FoliaCompatibleAPI;
-import net.myunco.folia.task.CompatibleScheduler;
+import net.myunco.folia.scheduler.CompatibleScheduler;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.Plugin;
@@ -38,7 +38,7 @@ public class ILoreEdit extends JavaPlugin {
         plugin = this;
         mcVersion = new Version(getServer().getBukkitVersion());
         if (!getServer().getPluginManager().isPluginEnabled("ProtocolLib")) {
-            if (mcVersion.isLessThan(16)) { //新版本就不提示了 因为新版服务端已经不能通过ProtocolLib获取连续空格了
+            if (mcVersion.isLessThan(16, 5)) { //新版本就不提示了 因为新版服务端已经不能通过ProtocolLib获取连续空格了
                 getLogger().info("未找到ProtocolLib插件, 将不支持直接连续空格。");
             }
         } else {
@@ -94,8 +94,8 @@ public class ILoreEdit extends JavaPlugin {
         Plugin api = getServer().getPluginManager().getPlugin("FoliaCompatibleAPI");
         if (api == null) {
             getLogger().warning("FoliaCompatibleAPI not found!");
-            File file = new File(getDataFolder().getParentFile(), "FoliaCompatibleAPI-1.1.0.jar");
-            InputStream in = getResource("lib/FoliaCompatibleAPI-1.1.0.jar");
+            File file = new File(getDataFolder().getParentFile(), "FoliaCompatibleAPI-1.2.0.jar");
+            InputStream in = getResource("lib/FoliaCompatibleAPI-1.2.0.jar");
             try {
                 saveResource(file, in);
                 api = getServer().getPluginManager().loadPlugin(file);
@@ -109,6 +109,16 @@ public class ILoreEdit extends JavaPlugin {
                 getLogger().severe("未安装 FoliaCompatibleAPI ，本插件无法运行！");
                 return;
             }
+        } else if (api.getDescription().getVersion().compareTo("1.2.0") < 0) {
+            getLogger().warning("FoliaCompatibleAPI version is " + api.getDescription().getVersion() + ", please update to 1.2.0 or later!");
+            try {
+                File file = new File(api.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
+                saveResource(file, getResource("lib/FoliaCompatibleAPI-1.2.0.jar"));
+                getLogger().warning("已自动升级FoliaCompatibleAPI至1.2.0，此版本为不兼容更新，请更新所有使用1.2.0以下版本的插件到最新版本并重启服务器！");
+                if (getServer().getPluginManager().getPlugin("ItemCommand") != null) {
+                    getLogger().warning("已知使用1.2.0以下版本的插件：ItemCommand-1.3.0(1)");
+                }
+            } catch (Exception ignored) {}
         }
         foliaCompatibleAPI = (FoliaCompatibleAPI) api;
         getServer().getConsoleSender().sendMessage("[ILoreEdit] Found FoliaCompatibleAPI: §3v" + api.getDescription().getVersion());
