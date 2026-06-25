@@ -255,7 +255,7 @@ public class EditLoreCommand implements TabExecutor {
                         lore.replaceAll(text -> Utils.translateColor(player, text));
                         meta.setLore(lore);
                     }
-                    if (plugin.mcVersion.isGreaterThanOrEqualTo(14) && template.hasCustomModelData(args[1])) {
+                    if (plugin.mcVersion.isGreaterOrEqual(14) && template.hasCustomModelData(args[1])) {
                         int data = template.getCustomModelData(args[1]);
                         if (data != 0) {
                             meta.setCustomModelData(data);
@@ -292,7 +292,7 @@ public class EditLoreCommand implements TabExecutor {
                 if (meta.hasLore()) {
                     template.setLore(args[1], meta.getLore());
                 }
-                if (plugin.mcVersion.isGreaterThanOrEqualTo(14) && meta.hasCustomModelData()) {
+                if (plugin.mcVersion.isGreaterOrEqual(14) && meta.hasCustomModelData()) {
                     template.setCustomModelData(args[1], meta.getCustomModelData());
                 }
                 template.save();
